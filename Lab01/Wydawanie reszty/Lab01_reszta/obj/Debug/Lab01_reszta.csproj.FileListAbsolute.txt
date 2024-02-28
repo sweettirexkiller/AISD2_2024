@@ -1,0 +1,10 @@
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\bin\Debug\Lab01_reszta.exe.config
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\bin\Debug\Lab01_reszta.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\bin\Debug\Lab01_reszta.pdb
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\bin\Debug\Graphs.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\bin\Debug\TestSet.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\obj\Debug\Lab01_reszta.csproj.AssemblyReference.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\obj\Debug\Lab01_reszta.csproj.CoreCompileInputs.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\obj\Debug\Lab01_reszta.csproj.CopyComplete
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\obj\Debug\Lab01_reszta.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Wydawanie reszty\Lab01_reszta\obj\Debug\Lab01_reszta.pdb
