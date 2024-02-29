@@ -47,6 +47,8 @@ namespace ASD
                 tc.TestMinimumRemainder(out msg);
                 Console.WriteLine("Test " + (i++).ToString() + ":\t" + msg);
             }
+            
+            Console.ReadKey();
         }
 
         static CustomTestCase makeTestCase(bool result, int minCrossouts, int minRemainder, string sequence, params string[] patterns)

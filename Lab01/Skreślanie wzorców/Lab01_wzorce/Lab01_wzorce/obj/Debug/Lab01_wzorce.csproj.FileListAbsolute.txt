@@ -1,0 +1,9 @@
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\bin\Debug\Lab01_wzorce.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\bin\Debug\Lab01_wzorce.pdb
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\bin\Debug\Graphs.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\bin\Debug\TestSet.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\obj\Debug\Lab01_wzorce.csproj.AssemblyReference.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\obj\Debug\Lab01_wzorce.csproj.CoreCompileInputs.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\obj\Debug\Lab01_wzorce.csproj.CopyComplete
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\obj\Debug\Lab01_wzorce.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab01\Skreślanie wzorców\Lab01_wzorce\Lab01_wzorce\obj\Debug\Lab01_wzorce.pdb
