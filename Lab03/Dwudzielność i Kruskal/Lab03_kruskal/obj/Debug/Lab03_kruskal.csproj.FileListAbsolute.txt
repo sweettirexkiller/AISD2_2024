@@ -1,0 +1,9 @@
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\bin\Debug\Lab03_kruskal.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\bin\Debug\Lab03_kruskal.pdb
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\bin\Debug\Graphs.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\bin\Debug\TestSet.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\obj\Debug\Lab03_kruskal.csproj.AssemblyReference.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\obj\Debug\Lab03_kruskal.csproj.CoreCompileInputs.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\obj\Debug\Lab03_kruskal.csproj.CopyComplete
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\obj\Debug\Lab03_kruskal.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab03\Dwudzielność i Kruskal\Lab03_kruskal\obj\Debug\Lab03_kruskal.pdb
