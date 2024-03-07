@@ -31,7 +31,7 @@ namespace ASD
                 for (int j = 0; j < m; j++)
                 {
                     reachable[i, j] = -1;
-                    cost[i,j] = int.MaxValue/2;
+                   // cost[i,j] = int.MaxValue/2;
                 }
             }
 
@@ -164,7 +164,7 @@ namespace ASD
                 for (int j = 0; j < m; j++)
                 {
                     reachable[i, j] = -1;
-                    cost[i,j] = int.MaxValue/2;
+                    // cost[i,j] = int.MaxValue/2;
                 }
             }
 
