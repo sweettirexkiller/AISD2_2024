@@ -2,6 +2,7 @@
 using ASD.Graphs;
 using ASD;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ASD
 {
@@ -22,7 +23,17 @@ namespace ASD
         //   2) Graf wynikowy musi być w takiej samej reprezentacji jak wejściowy
         public DiGraph Lab03Reverse(DiGraph g)
         {
-            return null;
+            // stworz nowy graph
+            DiGraph reversed = new DiGraph(g.VertexCount, g.Representation);
+            // dla kazdej krawedzi w grafie g 
+            foreach (Edge e in g.DFS().SearchAll())
+            {
+                // dodaj krawedz w druga strone do nowego grafu
+                reversed.AddEdge(e.To, e.From);
+            }
+
+            return reversed;
+
         }
 
         // Część 2
@@ -44,8 +55,41 @@ namespace ASD
         //   4) Metoda ma mieć taki sam rząd złożoności jak zwykłe przeszukiwanie (za większą będą kary!)
         public bool Lab03IsBipartite(Graph g, out int[] vert)
         {
-            vert = null;
-            return false;
+            vert = new int[g.VertexCount];
+
+
+            for (int i = 0; i < g.VertexCount; i++)
+            {
+                // nieodwiedzony wierzchołek, wywolaj dfs
+
+                if (vert[i] == 0)
+                {
+                    // zrob BFS od tego wierzcholka
+                    int currentColor = 1;
+                    vert[i] = currentColor;
+                    IEnumerable<Edge> result = g.BFS().SearchFrom(i);
+                    // przejdz wszystkie wierzcholki i na zmiane koloruj 
+                    foreach (Edge e in result)
+                    {
+                        currentColor = vert[e.From];
+                        if (vert[e.To] == 0)
+                        {
+                            vert[e.To] = 3 - currentColor;
+                        }
+                        else if (vert[e.To] != 3 - currentColor)
+                        {
+                            vert = null;
+                            return false;
+                        }
+
+                        currentColor = 3 - currentColor;
+                    }
+                }
+
+
+            }
+
+            return true;
         }
 
         // Część 3
@@ -69,7 +113,39 @@ namespace ASD
         public Graph<int> Lab03Kruskal(Graph<int> g, out int mstw)
         {
             mstw = 0;
-            return null;
+            // szukamy rozpinajacego drzewa o najmniejszej sumie wag krawedzi
+            // czyli minimalnego drzewa rozpinajacego 
+            // zainicjiuj UNION FIND ze wszystkimi wierzcholkami
+            UnionFind uf = new UnionFind(g.VertexCount);
+            // zainicjuj graf wynikowy minimal spanning tree 
+            Graph<int> mst = new Graph<int>(g.VertexCount, g.Representation);
+
+            // zainicjuj kolejke priorytetowa krawedzi
+            PriorityQueue<int, Edge<int>> pq = new PriorityQueue<int, Edge<int>>();
+            // dodaj wszystkie krawedzie do kolejki priorytetowej
+            foreach (Edge<int> e in g.DFS().SearchAll())
+            {
+                pq.Insert(e, e.Weight);
+            }
+
+            // dopoki kolejka nie jest pusta
+            while (!pq.Count.Equals(0))
+            {
+                // wyjmij krawedz z kolejki
+                Edge<int> e = pq.Extract();
+                // jesli krawedz nie tworzy cyklu
+                if (uf.Find(e.From) != uf.Find(e.To))
+                {
+                    // dodaj krawedz do drzewa
+                    mst.AddEdge(e.From, e.To, e.Weight);
+                    // dodaj wage krawedzi do wyniku
+                    mstw += e.Weight;
+                    // polacz wierzcholki
+                    uf.Union(e.From, e.To);
+                }
+            }
+
+            return mst;
         }
 
         // Część 4
@@ -86,9 +162,49 @@ namespace ASD
         //      Zadanie jest bardzo łatwe (jeśli wydaje się trudne - poszukać prostszego sposobu, a nie walczyć z trudnym!)
         public bool Lab03IsUndirectedAcyclic(Graph g)
         {
-            return false;
-        }
+            // sprwadzic czy jest acykliczny czyli czy jest lasem lub drzewem 
+            // czyli czy ma n-1 krawedzi i n wierzcholkow 
+            // lub jesli ma skladowe to wtedy m skladowych i n - m krawedzi
 
+            // najpierw liczba skladowych 
+
+            int i = 1;
+            int count = 0;
+            int[] vert = new int[g.VertexCount];
+            for (int j = 0; j < g.VertexCount; j++)
+            {
+                if (vert[j] == 0)
+                {
+                    vert[j] = i;
+                    IEnumerable<Edge> result = g.BFS().SearchFrom(j);
+                    foreach (Edge e in result)
+                    {
+                        vert[e.To] = i;
+                    }
+
+                    i++;
+                }
+            }
+
+            // liczba skladowych
+            count = i - 1;
+
+            int edgeCount = g.EdgeCount;
+
+            if (count == 1 && edgeCount == g.VertexCount - 1)
+            {
+                return true;
+            }
+            else if (count > 1 && edgeCount == g.VertexCount - count)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
     }
 
 }

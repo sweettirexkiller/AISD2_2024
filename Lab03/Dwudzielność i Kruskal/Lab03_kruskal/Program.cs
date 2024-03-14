@@ -23,11 +23,10 @@ namespace ASD
             TestBipartite();
             Console.WriteLine("\nPart 3 - Kruskal");
             TestKruskal();
-            
+            Console.WriteLine("\nPart 4 - Acyclic");
+            TestAcyclic();
+            Console.WriteLine();
             Console.ReadLine();
-            // Console.WriteLine("\nPart 4 - Acyclic");
-            // TestAcyclic();
-            // Console.WriteLine();
         }
 
         private static void TestReverse()
