@@ -1,6 +1,7 @@
 ﻿using System;
 using ASD.Graphs;
 using System.Collections.Generic;
+using System.Security.Policy;
 
 namespace ASD
 {
@@ -77,49 +78,54 @@ namespace ASD
             // O(n*K + mlogn) ????
             int[] miastaMozliweDoOdwiedzenia = new int[] { miastoStartowe };
             // jesli moze byc  w danym wierzcholku o danej godzienie to zapisujemy z ktorego wierzcholka przyszedl
-            int[,] dokadDojadeOGodzinie = new int[graph.VertexCount,K];
-            bool[,] visited = new bool[graph.VertexCount,K];
+            Edge<int>?[,] pociagDoNDoGodzinyK = new Edge<int>?[graph.VertexCount,K+1];
 
             
-            dokadDojadeOGodzinie[miastoStartowe, 8] = 0;
+         
             // O(n)
             for (int n = 0; n < graph.VertexCount; n++)
             {
                 // O(K)
                 for(int k =8; k < K; k++)
                 { 
-                    dokadDojadeOGodzinie[n, k] = int.MaxValue;
-                    visited[n, k] = false;
-                    foreach (Edge<int> e in graph.OutEdges(n))
-                   {
-                       if(e.Weight == k) 
-                       {
-                           // mozna o tej godzinie wejsc to do tego pociagu i pojechac do e.To
-                           dokadDojadeOGodzinie[n, k] = e.To;
-                       }
-                   }
+                    if(n == miastoStartowe && k == 8)
+                    {
+                        // do godziny 8 mozemy dojechac do stacji n w 0 godzin
+                        pociagDoNDoGodzinyK[n, k] = new Edge<int>(miastoStartowe, n, 0);
+                    }
+                    else
+                    {
+                        // do godziny k nie mozemy dojechac do stacji n
+                        pociagDoNDoGodzinyK[n, k] = null;
+                    }
                 }
             }
-            visited[miastoStartowe, 8] = true;
-            
-            
-            
-            
-            // O(mlogn) - Dijkstra z kolejka priorytetowa
-            int[] czasDojazdu = new int[graph.VertexCount];
-            for (int i = 0; i < graph.VertexCount; i++)
+
+            // inicjiujemy dokad mozna dojechac z miasta startowego o danej godzinie
+            foreach (Edge<int> e in graph.OutEdges(miastoStartowe))
             {
-                czasDojazdu[i] = int.MaxValue;
+                // do godziny e.Weight + 1 mozemy dojechac do stacji e.To pociagiem edge
+                if(e.Weight + 1 <= K)
+                {
+                    pociagDoNDoGodzinyK[e.To, e.Weight +1] = e;
+                }
             }
             
-            czasDojazdu[miastoStartowe] = 0;
+            
+            // stworz kolejke priorytetowa zainicjowana wiercholkami gdzie priorytet to odlegloscOGodzinie[v,k]
+            PriorityQueue<int,Edge<int>?> queue = new PriorityQueue<int,Edge<int>?>();
             
             
-            // stworz kolejke priorytetowa zainicjowana wiercholkami gdzie priorytet to odleglosc[v]
-            PriorityQueue<int, int> queue = new PriorityQueue<int, int>();
-            for (int i = 0; i < graph.VertexCount; i++)
+            
+            for (int n = 0; n < graph.VertexCount; n++)
             {
-                queue.Insert(i, czasDojazdu[i]);
+                for (int k = 8; k < K; k++)
+                {                
+                    if(pociagDoNDoGodzinyK[n,k] != null)
+                    {
+                        queue.Insert(pociagDoNDoGodzinyK[n, k],k);
+                    }
+                }
             }
             
             
@@ -128,20 +134,48 @@ namespace ASD
             // dopoki kolejka niepusta
             while (!queue.Count.Equals(0))
             {
-                // wyjmij ten element z najmnejszym priorytetem
-                int u = queue.Extract();
-                foreach (Edge<int> e in graph.OutEdges(u))
-                {
-                    // czy moge skorzystac z tego pociagu ?
-                    if (dokadDojadeOGodzinie[u, czasDojazdu[u]] == e.To)
+                // wyjmij hashset z najmnejszym priorytetm 
+                Edge<int>? pociagDojazdowy = queue.Extract();
+                
+                // dla kazdego wierzcholka w hashsecie wykonaj relaksacje ??
+                    int v = pociagDojazdowy.Value.To;
+                    int czas = pociagDojazdowy.Value.Weight + 1;
+                    foreach (Edge<int> pociagOdjazdowy in graph.OutEdges(v))
                     {
-                        // jesli tak to sprawdz czy moge dojechac do tego miasta
-                        if (czasDojazdu[e.To] > czasDojazdu[u] + 1)
+                        // czy moge skorzystac z tego pociagu ?
+                        if (czas <= pociagOdjazdowy.Weight)
                         {
-                            czasDojazdu[e.To] = czasDojazdu[u] + 1;
-                            queue.Insert(e.To, czasDojazdu[e.To]);
+                            // jesli ten pociag odjezdza i tak juz po czasie K to nie ma sensu sprawdzac
+                            if(pociagOdjazdowy.Weight >= K) continue;
+                            // 
+                            
+                            // jesli tak to sprawdz czy moge dojechac do wierzcholka e.To korzystajac z pociagu o godzinie e.Weight
+                            // kosztem mniejszym niz obecny
+                            
+                            // if (pociagDoNDoGodzinyK[pociagOdjazdowy.To, pociagOdjazdowy.Weight +1].Value.Weight+1 > pociagDoNDoGodzinyK[pociagOdjazdowy.To, ] + 1)
+                            // {
+                                // pociagDoNDoGodzinyK[e.To, e.Weight] = pociagDoNDoGodzinyK[u, czas] + 1;
+                                // znajdz w kolejce hashset z wierzcholkiem e.To i godzina e.Weight
+                                
+                                // wykonaj zmiane priorytetu dla wierzcholka e.To o godzienie e.Weight 
+                                // queue.Insert(new Tuple<int, int>(e.To,e.Weight), pociagDoNDoGodzinyK[e.To, e.Weight]);
+                            // }
                         }
                     }
+               
+            }
+            
+            // znajdz w odlegosc te ktorych odleglosc jest mniejsza od K - 8
+            for(int i = 0; i < graph.VertexCount; i++)
+            {
+                for (int j = 8; j < K; j++)
+                {
+                    // if (pociagDoNDoGodzinyK[i, j] <= K - 8)
+                    // {
+                    //     // dodaj miasto "i" do tablicy miastaMozliweDoOdwiedzenia
+                    //     Array.Resize(ref miastaMozliweDoOdwiedzenia, miastaMozliweDoOdwiedzenia.Length + 1);
+                    //     miastaMozliweDoOdwiedzenia[miastaMozliweDoOdwiedzenia.Length - 1] = i;
+                    // }
                 }
             }
             

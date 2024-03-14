@@ -7,3 +7,12 @@ C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_pun
 C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.csproj.CopyComplete
 C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.exe
 C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.pdb
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\bin\Debug\Lab04_punktowane.exe
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\bin\Debug\Lab04_punktowane.pdb
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\bin\Debug\Graphs.dll
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\bin\Debug\TestSet.dll
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.csproj.AssemblyReference.cache
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.csproj.CoreCompileInputs.cache
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.csproj.CopyComplete
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.exe
+C:\Users\stasj\Documents\piotrjankiewicz\AISD2_2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.pdb
