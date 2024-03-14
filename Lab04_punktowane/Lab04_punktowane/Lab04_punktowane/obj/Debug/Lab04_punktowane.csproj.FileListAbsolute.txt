@@ -1,0 +1,9 @@
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\bin\Debug\Lab04_punktowane.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\bin\Debug\Lab04_punktowane.pdb
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\bin\Debug\Graphs.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\bin\Debug\TestSet.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.csproj.AssemblyReference.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.csproj.CoreCompileInputs.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.csproj.CopyComplete
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab04_punktowane\Lab04_punktowane\Lab04_punktowane\obj\Debug\Lab04_punktowane.pdb
