@@ -1,0 +1,9 @@
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\bin\Debug\Lab05_1.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\bin\Debug\Lab05_1.pdb
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\bin\Debug\Graphs.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\bin\Debug\TestSet.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\obj\Debug\Lab05_1.csproj.AssemblyReference.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\obj\Debug\Lab05_1.csproj.CoreCompileInputs.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\obj\Debug\Lab05_1.csproj.CopyComplete
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\obj\Debug\Lab05_1.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab05_najkrotszesciezki\Labirynt\Lab05_1\Lab05_1\obj\Debug\Lab05_1.pdb

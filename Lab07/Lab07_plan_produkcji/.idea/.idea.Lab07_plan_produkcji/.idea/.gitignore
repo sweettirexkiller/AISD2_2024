@@ -3,9 +3,9 @@
 /workspace.xml
 # Rider ignored files
 /modules.xml
-/.idea.Lab04_punktowane.iml
-/contentModel.xml
+/.idea.Lab07_plan_produkcji.iml
 /projectSettingsUpdater.xml
+/contentModel.xml
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files

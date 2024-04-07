@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab06_punktowane", "Lab06_punktowane\Lab06_punktowane.csproj", "{614E8C1D-8D4F-4FD9-AB68-E39DC83645CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{614E8C1D-8D4F-4FD9-AB68-E39DC83645CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{614E8C1D-8D4F-4FD9-AB68-E39DC83645CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{614E8C1D-8D4F-4FD9-AB68-E39DC83645CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{614E8C1D-8D4F-4FD9-AB68-E39DC83645CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

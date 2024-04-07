@@ -1,0 +1,9 @@
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\bin\Debug\Lab07_spojnosc_przekroj.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\bin\Debug\Lab07_spojnosc_przekroj.pdb
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\bin\Debug\Graphs.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\bin\Debug\TestSet.dll
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\obj\Debug\Lab07_spojnosc_przekroj.csproj.AssemblyReference.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\obj\Debug\Lab07_spojnosc_przekroj.csproj.CoreCompileInputs.cache
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\obj\Debug\Lab07_spojnosc_przekroj.csproj.CopyComplete
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\obj\Debug\Lab07_spojnosc_przekroj.exe
+C:\Users\piotr\OneDrive\Dokumenty\PROJEKTY\AISD2\2024\Lab07\Lab07_spojnosc_przekroj\Lab07_spojnosc_przekroj\obj\Debug\Lab07_spojnosc_przekroj.pdb
