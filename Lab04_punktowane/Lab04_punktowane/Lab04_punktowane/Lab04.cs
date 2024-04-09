@@ -2,6 +2,12 @@
 using ASD.Graphs;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
+<<<<<<< HEAD
+using System.Linq;
+=======
+using System.Security.Policy;
+>>>>>>> 25f7eaa1e816b4d9676f4a45ae071ac4229a372a
 
 namespace ASD
 {
@@ -76,6 +82,7 @@ namespace ASD
         public int[] Lab04Stage2(DiGraph<int> graph, int miastoStartowe, int K)
         {
             // O(n*K + mlogn) ????
+<<<<<<< HEAD
              var miastaMozliweDoOdwiedzenia = new List<int>();
              
             // O(mlogn) - Dijkstra z kolejka priorytetowa
@@ -86,13 +93,64 @@ namespace ASD
             // stworz kolejke priorytetowa zainicjowana wiercholkami gdzie priorytet to odleglosc[v]
             SafePriorityQueue<int, int> queue = new SafePriorityQueue<int, int>();
             for (int i = 0; i < graph.VertexCount; i++)
+=======
+            int[] miastaMozliweDoOdwiedzenia = new int[] { miastoStartowe };
+            // jesli moze byc  w danym wierzcholku o danej godzienie to zapisujemy z ktorego wierzcholka przyszedl
+            Edge<int>?[,] pociagDoNDoGodzinyK = new Edge<int>?[graph.VertexCount,K+1];
+
+            
+         
+            // O(n)
+            for (int n = 0; n < graph.VertexCount; n++)
             {
-                queue.Insert(i, czasDojazdu[i]);
+                // O(K)
+                for(int k =8; k < K; k++)
+                { 
+                    if(n == miastoStartowe && k == 8)
+                    {
+                        // do godziny 8 mozemy dojechac do stacji n w 0 godzin
+                        pociagDoNDoGodzinyK[n, k] = new Edge<int>(miastoStartowe, n, 0);
+                    }
+                    else
+                    {
+                        // do godziny k nie mozemy dojechac do stacji n
+                        pociagDoNDoGodzinyK[n, k] = null;
+                    }
+                }
+            }
+
+            // inicjiujemy dokad mozna dojechac z miasta startowego o danej godzinie
+            foreach (Edge<int> e in graph.OutEdges(miastoStartowe))
+            {
+                // do godziny e.Weight + 1 mozemy dojechac do stacji e.To pociagiem edge
+                if(e.Weight + 1 <= K)
+                {
+                    pociagDoNDoGodzinyK[e.To, e.Weight +1] = e;
+                }
+            }
+            
+            
+            // stworz kolejke priorytetowa zainicjowana wiercholkami gdzie priorytet to odlegloscOGodzinie[v,k]
+            PriorityQueue<int,Edge<int>?> queue = new PriorityQueue<int,Edge<int>?>();
+            
+            
+            
+            for (int n = 0; n < graph.VertexCount; n++)
+>>>>>>> 25f7eaa1e816b4d9676f4a45ae071ac4229a372a
+            {
+                for (int k = 8; k < K; k++)
+                {                
+                    if(pociagDoNDoGodzinyK[n,k] != null)
+                    {
+                        queue.Insert(pociagDoNDoGodzinyK[n, k],k);
+                    }
+                }
             }
             
             //dijkstra
             while (!queue.Count.Equals(0))
             {
+<<<<<<< HEAD
                 int u = queue.Extract();
 
                 foreach (Edge<int> e in graph.OutEdges(u))
@@ -106,7 +164,50 @@ namespace ASD
                     {
                         czasDojazdu[e.To] = e.Weight + 1;
                         queue.UpdatePriority(e.To, czasDojazdu[e.To]);
+=======
+                // wyjmij hashset z najmnejszym priorytetm 
+                Edge<int>? pociagDojazdowy = queue.Extract();
+                
+                // dla kazdego wierzcholka w hashsecie wykonaj relaksacje ??
+                    int v = pociagDojazdowy.Value.To;
+                    int czas = pociagDojazdowy.Value.Weight + 1;
+                    foreach (Edge<int> pociagOdjazdowy in graph.OutEdges(v))
+                    {
+                        // czy moge skorzystac z tego pociagu ?
+                        if (czas <= pociagOdjazdowy.Weight)
+                        {
+                            // jesli ten pociag odjezdza i tak juz po czasie K to nie ma sensu sprawdzac
+                            if(pociagOdjazdowy.Weight >= K) continue;
+                            // 
+                            
+                            // jesli tak to sprawdz czy moge dojechac do wierzcholka e.To korzystajac z pociagu o godzinie e.Weight
+                            // kosztem mniejszym niz obecny
+                            
+                            // if (pociagDoNDoGodzinyK[pociagOdjazdowy.To, pociagOdjazdowy.Weight +1].Value.Weight+1 > pociagDoNDoGodzinyK[pociagOdjazdowy.To, ] + 1)
+                            // {
+                                // pociagDoNDoGodzinyK[e.To, e.Weight] = pociagDoNDoGodzinyK[u, czas] + 1;
+                                // znajdz w kolejce hashset z wierzcholkiem e.To i godzina e.Weight
+                                
+                                // wykonaj zmiane priorytetu dla wierzcholka e.To o godzienie e.Weight 
+                                // queue.Insert(new Tuple<int, int>(e.To,e.Weight), pociagDoNDoGodzinyK[e.To, e.Weight]);
+                            // }
+                        }
+>>>>>>> 25f7eaa1e816b4d9676f4a45ae071ac4229a372a
                     }
+               
+            }
+            
+            // znajdz w odlegosc te ktorych odleglosc jest mniejsza od K - 8
+            for(int i = 0; i < graph.VertexCount; i++)
+            {
+                for (int j = 8; j < K; j++)
+                {
+                    // if (pociagDoNDoGodzinyK[i, j] <= K - 8)
+                    // {
+                    //     // dodaj miasto "i" do tablicy miastaMozliweDoOdwiedzenia
+                    //     Array.Resize(ref miastaMozliweDoOdwiedzenia, miastaMozliweDoOdwiedzenia.Length + 1);
+                    //     miastaMozliweDoOdwiedzenia[miastaMozliweDoOdwiedzenia.Length - 1] = i;
+                    // }
                 }
             }
 
@@ -122,6 +223,45 @@ namespace ASD
                 }
             }
             
+            miastaMozliweDoOdwiedzenia.Sort();
+            return miastaMozliweDoOdwiedzenia.ToArray();
+             var miastaMozliweDoOdwiedzenia = new List<int>();
+             
+            // O(mlogn) - Dijkstra z kolejka priorytetowa
+            int[] czasDojazdu = Enumerable.Repeat(int.MaxValue, graph.VertexCount).ToArray();
+
+            czasDojazdu[miastoStartowe] = 8;
+            
+            // stworz kolejke priorytetowa zainicjowana wiercholkami gdzie priorytet to odleglosc[v]
+            SafePriorityQueue<int, int> queue = new SafePriorityQueue<int, int>();
+            for (int i = 0; i < graph.VertexCount; i++)
+            {
+                queue.Insert(i, czasDojazdu[i]);
+            //dijkstra
+                int u = queue.Extract();
+
+                foreach (Edge<int> e in graph.OutEdges(u))
+                {
+                    // nie warto rozważać krawędzi ktorego pociag dojedzie po K
+                    if (e.Weight + 1 > K) continue;
+
+                    // czy tym pociagiem mozna dojechac do e.To szybciej niz dotychczas?
+                    // z pociagu mozna skorzystac jesli dojechalismy na stacje przed odjazdem 
+                    if (czasDojazdu[e.To] > e.Weight + 1 && czasDojazdu[u] <= e.Weight)
+                    {
+                        czasDojazdu[e.To] = e.Weight + 1;
+                        queue.UpdatePriority(e.To, czasDojazdu[e.To]);
+
+
+            // wyłuskaj te wierzcholki ktore sa dostepne przed K
+            for (int i = 0; i < graph.VertexCount; i++)
+            {
+                if (czasDojazdu[i] <= K)
+                {
+                    // dodaj miasto "i" do tablicy miastaMozliweDoOdwiedzenia
+                    miastaMozliweDoOdwiedzenia.Add(i);
+                }
+            }
             miastaMozliweDoOdwiedzenia.Sort();
             return miastaMozliweDoOdwiedzenia.ToArray();
         }
