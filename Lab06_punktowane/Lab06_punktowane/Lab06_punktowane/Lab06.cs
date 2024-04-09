@@ -85,7 +85,7 @@ namespace ASD
 		    bool[,] visited = new bool[g.VertexCount, n];
 		    (int,int)[,] prev = new (int,int)[g.VertexCount, n];
 		    
-		    // DFS
+		    // DFS / BFS
 		    Stack<(int,int)> stack = new Stack<(int, int)>();
 		    for (int i = 0; i < n; i++)
 		    {
@@ -96,7 +96,7 @@ namespace ASD
 		    
 		    while(stack.Count > 0 && !found)
 		    {
-		    	(int vertex, int enteringColor) = stack.Pop();
+		    	(int vertex, int enteringColor) = stack.Extract();
 		        
 		    	foreach(Edge<int> edge in g.OutEdges(vertex))
 		    	{
@@ -112,16 +112,14 @@ namespace ASD
 				             break;
 			             }
 		            }
-		            foreach (Edge<int> colorShift in c.OutEdges(enteringColor))
+
+		            if (c.HasEdge(enteringColor, colorRequired))
 		            {
-			            int newColorPossibility = colorShift.To;
-			            
-			            if (newColorPossibility == colorRequired && !visited[edge.To, newColorPossibility])
+			            if (!visited[edge.To, colorRequired])
 			            {
-				            stack.Insert((edge.To, newColorPossibility));
-				        
-				            visited[edge.To, newColorPossibility] = true;
-				            prev[edge.To, newColorPossibility] = (vertex, enteringColor);
+				            stack.Insert((edge.To, colorRequired));
+				            visited[edge.To, colorRequired] = true;
+				            prev[edge.To, colorRequired] = (vertex, enteringColor);
 				            if (edge.To == target)
 				            {
 					            found = true;
@@ -129,8 +127,7 @@ namespace ASD
 				            }
 			            }
 		            }
-		            
-		    	}
+		        }
 		    }
 		    
 		    for (int i = 0; i < n; i++)
@@ -191,14 +188,20 @@ namespace ASD
 			}
 			
 			
-			
-			
 		    return (cost, finalPath);
 		}
 
 		private DiGraph<int> buildTravelingGraphWithMultipleStarts(DiGraph<int> colorShiftGraph, Graph<int> cityGraph, int[] starts, int target, out int superStartVertex, out int superTargetVertex)
 		{
 			DiGraph<int> travelingGraph = new DiGraph<int>(cityGraph.VertexCount*colorShiftGraph.VertexCount + 2);
+			DiGraph<double> inverseShifts = new DiGraph<double>(colorShiftGraph.VertexCount);
+			for (int i = 0; i < colorShiftGraph.VertexCount; i++)
+			{
+				foreach (Edge<int> edge in colorShiftGraph.OutEdges(i))
+				{
+					inverseShifts.AddEdge(edge.To, edge.From, edge.Weight);
+				}
+			}
 
 			superStartVertex  = cityGraph.VertexCount*colorShiftGraph.VertexCount;
 			superTargetVertex = cityGraph.VertexCount*colorShiftGraph.VertexCount + 1;
@@ -213,29 +216,30 @@ namespace ASD
 					travelingGraph.AddEdge(superStartVertex, layerColor*vertexCountInLayer + start, 0);
 				}
 				travelingGraph.AddEdge(layerColor*vertexCountInLayer + target, superTargetVertex, 0);
-
-				foreach(Edge<int> street in cityGraph.BFS().SearchAll())
+			}
+			
+			for(int i = 0; i < cityGraph.VertexCount; i++)
+			{
+				foreach(Edge<int> street in  cityGraph.OutEdges(i))
 				{
 					int colorRequired = street.Weight;
-					int layerFrom = street.From + layerColor*vertexCountInLayer;
-					int layerTo = street.To + layerColor*vertexCountInLayer;
+					// bez zmiany koloru
+					int layerFrom = street.From + colorRequired*vertexCountInLayer;
+					int layerTo = street.To + colorRequired*vertexCountInLayer;
+					travelingGraph.AddEdge(layerFrom, layerTo, 1);
 					
-					// krawedz jest w kolorze colorRequired wiec zostajemy na poziomie
-					if (layerColor == colorRequired)
+					
+					foreach(Edge<double> inverseColorShift in inverseShifts.OutEdges(colorRequired))
 					{
-						travelingGraph.AddEdge(layerFrom, layerTo, 1);
+						int enteringLayer = inverseColorShift.To;
+						
+						layerFrom = street.From + enteringLayer*vertexCountInLayer;
+						layerTo = street.To + colorRequired*vertexCountInLayer;
+						travelingGraph.AddEdge(layerFrom, layerTo, (int)inverseColorShift.Weight+1);
 					}
-					else
-					{
-						// jesli kameleon potrafii zmienic kolor to zmiec poziom i przejdz na ten wiercholek na tym poziomie
-						if(colorShiftGraph.HasEdge(layerColor, colorRequired))
-						{
-							int toInDiffLayer = street.To + colorRequired*vertexCountInLayer;
-							double effort = colorShiftGraph.GetEdgeWeight(layerColor, colorRequired);
-							travelingGraph.AddEdge(layerFrom, toInDiffLayer, (int)effort+1);
-						}
-					}
+
 				}
+					
 			}
 
 
