@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8d72d735-1b9a-424f-967e-45dcd7c14555" name="Changes" comment="" />
+    <list default="true" id="8d72d735-1b9a-424f-967e-45dcd7c14555" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,6 +34,7 @@
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/Users/piotr/OneDrive/Dokumenty/PROJEKTY/AISD2/2024",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -51,6 +54,7 @@
       <option name="presentableId" value="Default" />
       <updated>1712663724705</updated>
       <workItem from="1712663726899" duration="78000" />
+      <workItem from="1712751022440" duration="214000" />
     </task>
     <task id="LOCAL-00001" summary="resolve">
       <option name="closed" value="true" />
