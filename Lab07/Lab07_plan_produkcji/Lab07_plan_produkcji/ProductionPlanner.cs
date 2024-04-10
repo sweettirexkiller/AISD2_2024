@@ -51,131 +51,182 @@ namespace ASD
             
             // Zbudowac sieci maksymalizująca w pierwszej kolejności produkcję a w drugiej kolejności zyski
             // Sieć, która maksymalizuje tylko produkcję (nie bierze pod uwage kosztow)
-            DiGraph<int> productionNetwork = new DiGraph<int>(2*production.Length + 4);
-            // Wierzchołki:
-            // 0 - źródło
-            int start = 0;
-            // 1 - produkcja w tygodniu 1
-            // 2 - produkcja w tygodniu 2
-            // ...
-            // n - produkcja w tygodniu n
-            // n+1 - magazyn
-            int magazyn = production.Length + 1;
-            // n+2 - kontriahent w tygodni 1
-            int kontrahentsStart = production.Length + 2;
-            // n +3 - kontrahent w tygodni 2
-            // n +4 - kontrahent w tygodni 3
-            // ...
-            // 2n + 2 - kontrahent w tygodni n
-            // 
-            // n+n+3 - ujście
-            int ujscie = production.Length*2 + 3;
+            DiGraph<int> productionNetwork = new DiGraph<int>(3*production.Length + 3);
+            int productionInWeekBegVertex = 0;
+            int kontrahentInWeekBegVertex = production.Length;
+            int magazynBegVertex = 2*production.Length;
+            int finalMagazynVertex = 3*production.Length - 1;
+            int magazynBottleNeckVertex = 3*production.Length;
+            int wejscie = 3*production.Length + 1;
+            int wyjscie = 3*production.Length + 2;
             
-            // Krawędzie:
+            
+            // magazyn finalny -> bottleneck magazyn
+            productionNetwork.AddEdge(finalMagazynVertex, magazynBottleNeckVertex, storageInfo.Quantity);
+            
             for (int week = 0; week < production.Length; week++)
             {
-                // z źródła do produkcji w tygodniu i - krawędź o przepustowości production[i].quantity
-                productionNetwork.AddEdge(start, week + 1, production[week].Quantity);
+                // wejscie -> produkcja 
+                productionNetwork.AddEdge(wejscie, productionInWeekBegVertex + week, production[week].Quantity);
+                
+                // produkcja -> kontrahent
+                productionNetwork.AddEdge(productionInWeekBegVertex + week, kontrahentInWeekBegVertex + week, production[week].Quantity);
                
-                // z produkcji w tygodniu i do magazynu - krawędź o przepustowości production[i].quantity
-                productionNetwork.AddEdge(week + 1, magazyn, production[week].Quantity);
-                
-                // z produkcji prosto do klienta
-                // jesli wiecej wyprodukowano niz sprzedano to mozna sprzedac wszystko
-                if(production[week].Quantity >= sales[week].Quantity)
+                // MAGAZYNY
+                for(int delay = week; delay < production.Length - 1; delay++)
                 {
-                    // z produkcji w tygodniu i do kontrahenta w tym tygodniu - krawędź o przepustowości sales[i].quantity
-                    productionNetwork.AddEdge(week + 1, kontrahentsStart +  week, sales[week].Quantity);
-                }
-                else // jesli wyprodukowano mniej niz sprzedano to mozna sprzedac tylko tyle ile wyprodukowano
-                {
-                    // z produkcji w tygodniu i do kontrahenta - krawędź o przepustowości production[i].quantity
-                    productionNetwork.AddEdge(week + 1,  kontrahentsStart +  week, production[week].Quantity);
+                    // produkcja -> magazyn opozniozny o i tydzien
+                    productionNetwork.AddEdge(productionInWeekBegVertex + week, magazynBegVertex + delay, production[week].Quantity);
+                    // magazyn opozniony o i tydzien -> magazyn STRAZNIK
+                    productionNetwork.AddEdge(magazynBegVertex + delay, finalMagazynVertex, storageInfo.Quantity);
                 }
                 
-                // z magazynu do kontrahenta - (mozna wyciagnac wszystko z magazynu zawsze)
-                productionNetwork.AddEdge(magazyn,  kontrahentsStart +  week, sales[week].Quantity);
+                // bottleneck magazyn -> kontrahent
+                productionNetwork.AddEdge( magazynBottleNeckVertex, kontrahentInWeekBegVertex+week, storageInfo.Quantity);
+
+                // kontrahent -> wyjscie
+                productionNetwork.AddEdge(kontrahentInWeekBegVertex + week, wyjscie, sales[week].Quantity);
                 
-                // z kontrahenta do ujścia - mozna wyciaganc tyle ile chce kupic
-                productionNetwork.AddEdge( kontrahentsStart +  week, ujscie, sales[week].Quantity);
-                
-                // z magazynu do ujścia - mozna pozostawic w magazynie
-                productionNetwork.AddEdge(magazyn, ujscie, storageInfo.Quantity);
+                // magazyn -> wyjscie
+                // productionNetwork.AddEdge(finalMagazynVertex, wyjscie, storageInfo.Quantity);
             }
             
-            // znajdz najwiekszy przeplyw produkcji 
-            (int maxProduction, DiGraph<int> maxProductionFlow) = Flows.FordFulkerson(productionNetwork, start, ujscie);
-
-            // W drugiej kolejności zbudować sieć, która maksymalizuje zyski ( dla ustalonej maksymalnej produkcji )
-            NetworkWithCosts<int, double> profitNetwork = new NetworkWithCosts<int, double>(production.Length*2 + 4);
-            // wierzchołki takie same jak w poprzedniej sieci
-            // Krawędzie:
-
+            // maksymalna produkcja 
+            var (maxProductionQuantity, maxProductionFlow)  = Flows.FordFulkerson(productionNetwork, wejscie, wyjscie);
+            
+            
+            // Sieć, która maksymalizuje zyski
+            NetworkWithCosts<int, double> profitNetwork = new NetworkWithCosts<int, double>(3*production.Length + 3);
+            
+            
             for (int week = 0; week < production.Length; week++)
             {
-                if (maxProductionFlow.HasEdge(start, week + 1))
+                // dodawaj tylko jesli maxProductionFlow korzysta z tej krawedzi
+                
+                // wejscie -> produkcja 
+                if (maxProductionFlow.HasEdge(wejscie, productionInWeekBegVertex + week))
                 {
-                    // z źródła do produkcji w tygodniu i - krawędź o przepustowości production[i].quantity i koszcie ilosc*koszt
-                    profitNetwork.AddEdge(start, week + 1, production[week].Quantity, production[week].Value * production[week].Quantity);
+                    double cost = production[week].Value;
+                    int quantity = maxProductionFlow.GetEdgeWeight(wejscie, productionInWeekBegVertex + week);
+                    profitNetwork.AddEdge(wejscie, productionInWeekBegVertex + week, quantity, cost);
                 }
                 
-                if(maxProductionFlow.HasEdge(week + 1, magazyn))
+                // produkcja -> kontrahent
+                if(maxProductionFlow.HasEdge(productionInWeekBegVertex + week, kontrahentInWeekBegVertex + week))
                 {
-                    // z produkcji w tygodniu i do magazynu - krawędź o przepustowości production[i].quantity i koszcie 0
-                    profitNetwork.AddEdge(week + 1, magazyn, production[week].Quantity,0);
+                    double cost = 0;
+                    int quantity = maxProductionFlow.GetEdgeWeight(productionInWeekBegVertex + week, kontrahentInWeekBegVertex + week);
+                    profitNetwork.AddEdge(productionInWeekBegVertex + week, kontrahentInWeekBegVertex + week, quantity, cost);
                 }
                
-                if(maxProductionFlow.HasEdge(magazyn, kontrahentsStart + week))
+                // MAGAZYNY
+                for(int delay = week; delay < production.Length - 1; delay++)
                 {
-                    int weeksInStorage = sales.Length - week;
-                    double costPerWeek = storageInfo.Value * production[week].Quantity;
-                    // z magazynu do kontrahenta - przeniesienie z magazynu do kontrahenta kosztuje w zaleznosci od ilosci tygodni w magazynie
-                    profitNetwork.AddEdge(magazyn, kontrahent, storageInfo.Quantity, weeksInStorage * costPerWeek);
-                }
-            
-                if (maxProductionFlow.HasEdge(kontrahent, ujscie))
-                {
-                    // z kontrahenta do ujścia - krawędź o przepustowości sales[i].quantity i koszcie -sales[i].value
-                    profitNetwork.AddEdge(kontrahent, ujscie, sales[week].Quantity, -sales[week].Value*sales[week].Quantity);
+                    // produkcja -> magazyn opozniozny o i tydzien
+                    if (maxProductionFlow.HasEdge(productionInWeekBegVertex + week, magazynBegVertex + delay))
+                    {
+                        int weeksInStorage = delay - week + 1;
+                        double cost = weeksInStorage * storageInfo.Value;
+                        int quantity = maxProductionFlow.GetEdgeWeight(productionInWeekBegVertex + week, magazynBegVertex + delay);
+                        profitNetwork.AddEdge(productionInWeekBegVertex + week, magazynBegVertex + delay, quantity,cost);
+                    }
+                   
+                    // magazyn opozniony o i tydzien -> magazyn STRAZNIK
+                    if (maxProductionFlow.HasEdge(magazynBegVertex + delay, finalMagazynVertex))
+                    {
+                        double cost = 0;
+                        int quantity = maxProductionFlow.GetEdgeWeight(magazynBegVertex + delay, finalMagazynVertex);
+                        profitNetwork.AddEdge(magazynBegVertex + delay, finalMagazynVertex, quantity, cost);
+                    }
                 }
                 
-                if(maxProductionFlow.HasEdge(magazyn, ujscie))
+                // magazyn finalny -> bottleneck magazyn
+                if (maxProductionFlow.HasEdge(finalMagazynVertex, magazynBottleNeckVertex))
                 {
-                    // z magazynu do ujścia - krawędź o przepustowości storageInfo.quantity i koszcie 0
-                    profitNetwork.AddEdge(magazyn, ujscie, storageInfo.Quantity, 0);
+                    double cost = 0;
+                    int quantity = maxProductionFlow.GetEdgeWeight(finalMagazynVertex, magazynBottleNeckVertex);
+                    profitNetwork.AddEdge(finalMagazynVertex, magazynBottleNeckVertex, quantity, cost);
+                }
+
+                // bottleneck magazyn -> kontrahent
+                if (maxProductionFlow.HasEdge(magazynBottleNeckVertex, kontrahentInWeekBegVertex + week))
+                {
+                    double cost = 0;
+                    int quantity = maxProductionFlow.GetEdgeWeight(magazynBottleNeckVertex, kontrahentInWeekBegVertex + week);
+                    profitNetwork.AddEdge(magazynBottleNeckVertex, kontrahentInWeekBegVertex + week, quantity, cost);
+                }
+
+                // kontrahent -> wyjscie
+                if (maxProductionFlow.HasEdge(kontrahentInWeekBegVertex + week, wyjscie))
+                {
+                    double cost = -sales[week].Value;
+                    int quantity = maxProductionFlow.GetEdgeWeight(kontrahentInWeekBegVertex + week, wyjscie);
+                    profitNetwork.AddEdge(kontrahentInWeekBegVertex + week, wyjscie, quantity, cost);
                 }
             }
             
-            var ( flowValue , flowCost , f ) = Flows.MinCostMaxFlow (profitNetwork, start , ujscie);
+            // profitNetwork.AddEdge(wejscie, wyjscie, maxProductionQuantity, 0);
 
-
-                
-                
-            // Wyznaczyć maksymalny zysk
-            // Wyznaczyć plan produkcji
-            // Wyznaczyć plan sprzedaży
-            // Wyznaczyć plan magazynowania
-
-            // Zwrócić obiekt PlanData z maksymalną produkcją i zyskiem
-            // Zwrócić tablicę weeklyPlan z planem produkcji, sprzedaży i magazynowania
-
-
-
-
-
-                // weeklyPlan - tablica obiektów zawierających informacje o sprzedaży w kolejnych tygodniach
-                // UnitsProduced - ile wyprodukowano
-                // UnitsProduced, ile sprzedano
-                // UnitsSold, ile przechowano
-
-
-                // quantity - maksymalna liczba wyprodukowanych telewizorów w danym tygodniu
-                // value - zysk fabryki w danym tygodniu – różnicę przychodów ze sprzedaży i kosztów produkcji i magazynowania
+            // maksymalny zysk
+            var ( flowValue , flowCost , minCostProfitFlow ) = Flows.MinCostMaxFlow(profitNetwork, wejscie , wyjscie ) ;
+            
             weeklyPlan = new SimpleWeeklyPlan[production.Length];
+            
+                // zbuduj plan 
+                //int prevWeekStore = 0;
+                for (int week = 0; week < production.Length; week++)
+                {
+                    // produkcja
+                    int productionQuantity = 0;
+                    if (minCostProfitFlow.HasEdge(wejscie, productionInWeekBegVertex + week))
+                    {
+                        productionQuantity = minCostProfitFlow.GetEdgeWeight(wejscie, productionInWeekBegVertex + week);
+                    }
+                    
+                    // kontrahent
+                    int salesQuantity = 0;
+                    if (minCostProfitFlow.HasEdge(kontrahentInWeekBegVertex + week, wyjscie))
+                    {
+                        
+                        salesQuantity = minCostProfitFlow.GetEdgeWeight(kontrahentInWeekBegVertex + week, wyjscie);
+                    }
+                    
+                    // czy cos wyszlo z magazynu w tym tyg
+                    // if(minCostProfitFlow.HasEdge(magazynBottleNeckVertex, kontrahentInWeekBegVertex + week))
+                    // {
+                    //     prevWeekStore -= minCostProfitFlow.GetEdgeWeight(magazynBottleNeckVertex, kontrahentInWeekBegVertex + week);
+                    // }
+
+                    // magazyn - czy jest krawedz z magazynu opoznienia do glownego
+                    int storageQuantity = 0;
+                    // for(int delay = 0; delay < production.Length - 1; delay++)
+                    // {
+                    //     if (minCostProfitFlow.HasEdge(productionInWeekBegVertex + week, magazynBegVertex + delay))
+                    //     {
+                    //         storageQuantity += minCostProfitFlow.GetEdgeWeight(productionInWeekBegVertex + week, magazynBegVertex + delay);
+                    //     }
+                    // }
+                    
+                    // magazyn - czy jest krawedz z magazynu week do magazynu finalnego
+                    if (minCostProfitFlow.HasEdge(magazynBegVertex + week, finalMagazynVertex))
+                    {
+                        storageQuantity += minCostProfitFlow.GetEdgeWeight(magazynBegVertex + week, finalMagazynVertex);
+                    }
+
+
+                    weeklyPlan[week] = new SimpleWeeklyPlan
+                    {
+                        UnitsProduced = productionQuantity,
+                        UnitsSold = salesQuantity,
+                        UnitsStored = storageQuantity,
+                    };
+                    // prevWeekStore = storageQuantity;
+                }
+                
             return new PlanData
             {
-                Value = 0,
-                Quantity = maxProduction
+                Value = -flowCost,
+                Quantity = flowValue,
             };
         }
 
