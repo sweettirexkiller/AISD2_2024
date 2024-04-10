@@ -10,7 +10,7 @@ namespace ASD
         /// Flaga pozwalająca na włączenie wypisywania szczegółów skonstruowanego planu na konsolę.
         /// Wartość <code>true</code> spoeoduje wypisanie planu.
         /// </summary>
-        public bool ShowDebug { get; } = false;
+        public bool ShowDebug { get; } = true;
 
         /// <summary>
         /// Część 1. zadania - zaplanowanie produkcji telewizorów dla pojedynczego kontrahenta.
@@ -45,6 +45,90 @@ namespace ASD
         public PlanData CreateSimplePlan(PlanData[] production, PlanData[] sales, PlanData storageInfo,
             out SimpleWeeklyPlan[] weeklyPlan)
         {
+            //production - quantitiy - limit produkcji w danym tygodniu, value - koszt produkcji jednej sztuki
+            
+            // sales - quantity - zapotrzebowanie kontrahenta w danym tygodniu, value - cena sprzedaży jednej sztuki
+            
+            // storageInfo - quantity - pojemność magazynu, value - koszt przechowania jednego telewizora w magazynie przez jeden tydzień
+
+            // Zbudowac sieci maksymalizująca w pierwszej kolejności produkcję a w drugiej kolejności zyski
+            
+            // Sieć, która maksymalizuje tylko produkcję (nie bierze pod uwage kosztow)
+            NetworkWithCosts<int, double> productionNetwork = new NetworkWithCosts<int, double>(production.Length + 4);
+            // Wierzchołki:
+            // 0 - źródło
+            int start = 0;
+            // 1 - produkcja w tygodniu 1
+            // 2 - produkcja w tygodniu 2
+            // ...
+            // n - produkcja w tygodniu n
+            // n+1 - magazyn
+            int magazyn = production.Length + 1;
+            // n+2 - kontrahent
+            int kontrahent = production.Length + 2;
+            // n+3 - ujście
+            int ujscie = production.Length + 3;
+            
+            // Krawędzie:
+            for (int week = 0; week < production.Length; week++)
+            {
+                // z źródła do produkcji w tygodniu i - krawędź o przepustowości production[i].quantity i koszcie ilosc*koszt
+                productionNetwork.AddEdge(start, week + 1, production[week].Quantity, production[week].Value * production[week].Quantity);
+               
+                // z produkcji w tygodniu i do magazynu - krawędź o przepustowości production[i].quantity i koszcie 0
+                productionNetwork.AddEdge(week + 1, magazyn, production[week].Quantity,0);
+                
+                int weeksInStorage = sales.Length - week;
+                double costPerWeek = storageInfo.Value * production[week].Quantity;
+                // z magazynu do kontrahenta - krawędź o przepustowości storageInfo.quantity i koszcie storageInfo.value
+                productionNetwork.AddEdge(magazyn, kontrahent, storageInfo.Quantity, weeksInStorage * costPerWeek);
+                
+                // z kontrahenta do ujścia - krawędź o przepustowości sales[i].quantity i koszcie -sales[i].value
+                productionNetwork.AddEdge(kontrahent, ujscie, sales[week].Quantity, -sales[week].Value*sales[week].Quantity);
+                
+                // z magazynu do ujścia - krawędź o przepustowości storageInfo.quantity i koszcie 0
+                productionNetwork.AddEdge(magazyn, ujscie, storageInfo.Quantity, 0);
+            }
+
+            // W drugiej kolejności zbudować sieć, która maksymalizuje zyski
+            NetworkWithCosts<int, double> profitNetwork = new NetworkWithCosts<int, double>(production.Length + 4);
+            // wierzchołki takie same jak w poprzedniej sieci
+            // Krawędzie:
+
+            for (int week = 0; week < production.Length; week++)
+            {
+                // z źródła do produkcji w tygodniu i - krawędź o przepustowości production[i].quantity i koszcie production[i].value
+                profitNetwork.AddEdge(start, week + 1, production[week].Quantity, 0);
+                // z produkcji w tygodniu i do magazynu - krawędź o przepustowości production[i].quantity i koszcie 0
+                profitNetwork.AddEdge(week + 1, magazyn, production[week].Quantity, 0);
+                // z magazynu do kontrahenta - krawędź o przepustowości storageInfo.quantity i koszcie storageInfo.value
+                profitNetwork.AddEdge(magazyn, kontrahent, storageInfo.Quantity, 0);
+                // z kontrahenta do ujścia - krawędź o przepustowości sales[i].quantity i koszcie -sales[i].value
+                profitNetwork.AddEdge(kontrahent, ujscie, sales[week].Quantity, sales[week].Value * sales[week].Quantity);
+                // z magazynu do ujścia - krawędź o przepustowości storageInfo.quantity i koszcie 0
+                profitNetwork.AddEdge(magazyn, ujscie, storageInfo.Quantity, 0);
+            }
+            // Wyznaczyć maksymalną produkcję
+            // Wyznaczyć maksymalny zysk
+            // Wyznaczyć plan produkcji
+            // Wyznaczyć plan sprzedaży
+            // Wyznaczyć plan magazynowania
+            
+            // Zwrócić obiekt PlanData z maksymalną produkcją i zyskiem
+            // Zwrócić tablicę weeklyPlan z planem produkcji, sprzedaży i magazynowania
+            
+            
+
+
+
+            // weeklyPlan - tablica obiektów zawierających informacje o sprzedaży w kolejnych tygodniach
+            // UnitsProduced - ile wyprodukowano
+            // UnitsProduced, ile sprzedano
+            // UnitsSold, ile przechowano
+
+
+            // quantity - maksymalna liczba wyprodukowanych telewizorów w danym tygodniu
+            // value - zysk fabryki w danym tygodniu – różnicę przychodów ze sprzedaży i kosztów produkcji i magazynowania
             weeklyPlan = null;
             return new PlanData
             {
