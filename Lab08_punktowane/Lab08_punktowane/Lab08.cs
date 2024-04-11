@@ -23,82 +23,53 @@ namespace ASD
             
             
             // blok (x,y) ma krawedzie do blokow (x,y-1) i (x+1,y-1) oraz do blokow (x-1,y-1) 
-            for(int y = 0; y < h - 1; y++)
+            for(int y = 0; y < h ; y++)
             {
-                for(int x = 0; x < l - 1; x++)
+                for (int x = 0; x < l ; x++)
                 {
+
+                    // kazdy blok ma do wyjscia o wartosci 1
+                    buildingGraph.AddEdge(x + y * l, sink, 1);
                     
-                    // przyjemnosc z postawienie bloku jeden wyzej
-                    
-                    if (pleasure[x, y] - 1 < 0)
+                    // kazdy ktory ma pleasure dodatnia to ma krawedz od ujscia  o wartosci przyjenosci 
+                    if (pleasure[x, y] > 0)
                     {
-                        buildingGraph.AddEdge(x + (y + 1) * l,x + y * l,   -(pleasure[x, y] - 1));
-                    }
-                    else
-                    {
-                        buildingGraph.AddEdge(x + y * l, x + (y + 1) * l,    pleasure[x, y] - 1);
+                        buildingGraph.AddEdge(source, x + y * l, pleasure[x, y]);
                     }
                     
-                    // przyjemnosc z postawienia bloku jeden wyzej i jeden w prawo (tylko jesli mozna)
-                    if (x > 0)
+                    // kazdy poza najnizszym wierszem ma krawedzie do blokow (x,y-1) i (x+1,y-1)
+                    if (y > 0)
                     {
-                        if (pleasure[x, y] - 1 < 0)
+                        
+                        buildingGraph.AddEdge(x + y * l, x + (y - 1) * l, int.MaxValue);
+                        
+                        if (x < l - 1)
                         {
-                            buildingGraph.AddEdge( x - 1 + (y + 1) * l,x + y * l,  -(pleasure[x, y] - 1));
-                        }
-                        else
-                        {
-                            buildingGraph.AddEdge(x + y * l, x - 1 + (y + 1) * l,  pleasure[x, y] - 1);
+                            buildingGraph.AddEdge(x + y * l, x + 1 + (y - 1) * l, int.MaxValue);
                         }
 
                     }
-                  
-                    
-                    // dodatkowo kazdy do ujscia 
-                    int pleasureValue = pleasure[x, y] - 1;
-                    if (pleasureValue < 0)
-                    {
-                        buildingGraph.AddEdge(sink,x + y * l,  -pleasureValue);
-                    }
-                    else
-                    {
-                        buildingGraph.AddEdge(x + y * l, sink, pleasureValue);
-                    }
                 }
             }
-           
-            // zrodlowy ma krawedzie do blokow (0,0), (1,0), ..., (l-1,0) z wagami przyjemnosci z postawienia bloku [0,i]
-            for(int x = 0; x < l; x++)
-            {
-                if(pleasure[x, 0] - 1 < 0)
-                {
-                    buildingGraph.AddEdge(x,source, -(pleasure[x, 0] - 1));
-                }
-                else
-                {
-                    buildingGraph.AddEdge(x, source, pleasure[x, 0] - 1);
-                }
-            }
-            
-            // bloki (x,h-1) maja krawedzie do ujscia z wagami 0
-            for(int x = 0; x < l; x++)
-            {
-                int pleasureValue = pleasure[x, h - 1] - 1;
-                if (pleasureValue - 1 < 0)
-                {
-                    buildingGraph.AddEdge(sink, x + (h - 1) * l, -pleasureValue);
-                }
-                else
-                {
-                    buildingGraph.AddEdge(x + (h - 1) * l, sink, pleasureValue );
-                }
-            }
-            
+
             // sprawdzamy czy istnieje sciezka zrodlowy -> ujscie
             var (flowValue, maxPleasureBuilding)= Flows.FordFulkerson(buildingGraph, source, sink);
 
+            // jesli jest conajmniej jedna krawedz ze zrodla ktora jest nienasycona to znaczy ze jest przyjemnosc
 
-            return (flowValue > 0) ? true : false;
+            bool isPleasure = false;
+            
+            foreach (var edge in buildingGraph.OutEdges(source))
+            {
+                int edgeFlowValue = maxPleasureBuilding.GetEdgeWeight(source, edge.To);
+                if (edge.Weight > edgeFlowValue)
+                {
+                    isPleasure = true;
+                    break;
+                }
+            }
+
+            return isPleasure;
         }
 
         /// <summary>Etap II: kompletny projekt</summary>
