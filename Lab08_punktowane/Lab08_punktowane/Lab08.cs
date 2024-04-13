@@ -32,37 +32,32 @@ namespace ASD
                     buildingGraph.AddEdge(x + y * l, sink, 1);
                     
                     // kazdy ktory ma pleasure dodatnia to ma krawedz od ujscia  o wartosci przyjenosci 
-                    if (pleasure[x, y] > 0)
+                    if (pleasure[x, y] > 0 &&  l - 1 - x >= y)
                     {
                         buildingGraph.AddEdge(source, x + y * l, pleasure[x, y]);
                     }
                     
                     // kazdy poza najnizszym wierszem ma krawedzie do blokow (x,y-1) i (x+1,y-1)
-                    if (y > 0)
+                    if (y > 0 && x < l - 1 && l - 1 - x >= y)
                     {
-                        
                         buildingGraph.AddEdge(x + y * l, x + (y - 1) * l, int.MaxValue);
-                        
-                        if (x < l - 1)
-                        {
-                            buildingGraph.AddEdge(x + y * l, x + 1 + (y - 1) * l, int.MaxValue);
-                        }
-
+                        buildingGraph.AddEdge(x + y * l, x + 1 + (y - 1) * l, int.MaxValue);
                     }
                 }
             }
 
             // sprawdzamy czy istnieje sciezka zrodlowy -> ujscie
-            var (flowValue, maxPleasureBuilding)= Flows.FordFulkerson(buildingGraph, source, sink);
+            var (flowValue, maxPleasureBuilding) = Flows.FordFulkerson(buildingGraph, source, sink);
 
             // jesli jest conajmniej jedna krawedz ze zrodla ktora jest nienasycona to znaczy ze jest przyjemnosc
 
             bool isPleasure = false;
             
-            foreach (var edge in buildingGraph.OutEdges(source))
+            foreach (var edge in maxPleasureBuilding.OutEdges(source))
             {
-                int edgeFlowValue = maxPleasureBuilding.GetEdgeWeight(source, edge.To);
-                if (edge.Weight > edgeFlowValue)
+                int weight = buildingGraph.GetEdgeWeight(source, edge.To);
+                int pleasureFlow = maxPleasureBuilding.GetEdgeWeight(source, edge.To);
+                if (weight > pleasureFlow)
                 {
                     isPleasure = true;
                     break;
