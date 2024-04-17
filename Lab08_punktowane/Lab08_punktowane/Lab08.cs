@@ -7,6 +7,38 @@ namespace ASD
 {
     public class Lab08 : MarshalByRefObject
     {
+
+        private DiGraph<int> buildResidual(DiGraph<int> g, DiGraph<int> maxFlow)
+        {
+            DiGraph<int> residualGraph = new DiGraph<int>(g.VertexCount);
+            
+            // przejdz po wszystkich wiercholkach 
+            for(int v = 0; v < g.VertexCount; v++)
+            {
+                // na podstweaie przeplywu zbuduj siec rezydualna
+                // jesli przeplyw jest mniejszy od wagi krawedzi to dodaj krawedz do sieci rezydualnej
+                // w przeciwmym kierunku o wartosci rownej przeplywowi i w tym samym kierunku o wartosci rownej wadze krawedzi - przeplyw
+                foreach (Edge<int> e in g.OutEdges(v))
+                {
+                    if (maxFlow.HasEdge(e.From, e.To))
+                    {
+                        if(maxFlow.GetEdgeWeight(e.From, e.To) < e.Weight)
+                        {
+                            residualGraph.AddEdge(e.From, e.To, e.Weight - maxFlow.GetEdgeWeight(e.From, e.To));
+                        }
+                        residualGraph.AddEdge(e.To, e.From, maxFlow.GetEdgeWeight(e.From, e.To));
+
+                    }
+                    else // jesli tej krawedzi nie ma w przeplywie to dodaj ja z waga rowna wadze krawedzi
+                    {
+                        residualGraph.AddEdge(e.From,e.To, e.Weight);
+                    }
+                }
+            }
+
+            return residualGraph;
+        }
+
         /// <summary>Etap I: prace przedprojektowe</summary>
         /// <param name="l">Długość działki, którą dysponuje Kameleon Kazik.</param>
         /// <param name="h">Maksymalna wysokość budowli.</param>
@@ -21,62 +53,17 @@ namespace ASD
             DiGraph<int> buildingGraph = buildBuildingGraph(l, h, pleasure,out source,out sink);
             // sprawdzamy czy istnieje sciezka zrodlowy -> ujscie
             var (flowValue, maxPleasureBuilding) = Flows.FordFulkerson(buildingGraph, source, sink);
-           
-            var reversedGraph = new DiGraph<int>(buildingGraph.VertexCount);
-            for(int v=0; v<buildingGraph.VertexCount; v++)
-            {
-                foreach (var edge in buildingGraph.OutEdges(v))
-                {
-                    reversedGraph.AddEdge(edge.To, edge.From, edge.Weight);
-                }
-            }
-            
-            // usun krawedz z bloku do ujscia jesli jedyna krawedzia wchodzaca jest z zrodla i jedyna wychodzaca do ujscia i blok nie jest na najnizszym poziomie
-            
-            for(int y = 0; y < h ; y++)
-            {
-                for (int x = 0; x < l ; x++)
-                {
-                    if (y > 0 && x < l - 1 && l - 1 - x >= y)
-                    {
-                        // sprawdzic czy wchodzaca jest tylko jedna i jest ze zrodla
-                        if (reversedGraph.OutDegree(x + y * l) == 1)
-                        {
-                            foreach (var edge in reversedGraph.OutEdges(x + y * l))
-                            {
-                                if (edge.To == source)
-                                {
-                                    // sprawdzic czy wychodzaca jest tylko jedna i jest do ujscia
-                                    if(maxPleasureBuilding.OutDegree(x + y * l) == 1)
-                                    {
-                                        foreach (var edge2 in maxPleasureBuilding.OutEdges(x + y * l))
-                                        {
-                                            if (edge2.To == sink)
-                                            {
-                                                // usun krawedz
-                                                buildingGraph.RemoveEdge(x + y * l, sink);
-                                                buildingGraph.RemoveEdge(source, x + y * l);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }                        
-                    }
-                }
-            }
-            
-            // zbuduj nowy graf maxPleasureBuilding 
-            var (flowValue2, maxPleasureBuilding2) = Flows.FordFulkerson(buildingGraph, source, sink);
 
             // jesli jest conajmniej jedna krawedz ze zrodla ktora jest nienasycona to znaczy ze jest przyjemnosc
 
             bool isPleasure = false;
             
-            foreach (var edge in maxPleasureBuilding2.OutEdges(source))
+            // przeplyw to ilosc wbudowanych blokow 
+            
+            foreach (var edge in maxPleasureBuilding.OutEdges(source))
             {
                 int weight = buildingGraph.GetEdgeWeight(source, edge.To);
-                int pleasureFlow = maxPleasureBuilding2.GetEdgeWeight(source, edge.To);
+                int pleasureFlow = maxPleasureBuilding.GetEdgeWeight(source, edge.To);
                 if (weight > pleasureFlow)
                 {
                     isPleasure = true;
@@ -89,6 +76,7 @@ namespace ASD
 
         private DiGraph<int> buildBuildingGraph(int l, int h, int[,] pleasure, out int source,out int sink)
         {
+            h = Math.Min(h, l);
             DiGraph<int> buildingGraph = new DiGraph<int>(l * h + 2);
             source = l * h;
             sink = l * h + 1;
@@ -99,20 +87,21 @@ namespace ASD
             // blok (x,y) ma krawedzie do blokow (x,y-1) i (x+1,y-1) oraz do blokow (x-1,y-1) 
             for(int y = 0; y < h ; y++)
             {
-                for (int x = 0; x < l ; x++)
+                for (int x = 0; x < l - y ; x++)
                 {
+                    // if(l - 1 - x < y) continue;
 
                     // kazdy blok ma do wyjscia o wartosci 1
                     buildingGraph.AddEdge(x + y * l, sink, 1);
                     
-                    // kazdy ktory ma pleasure dodatnia to ma krawedz od ujscia  o wartosci przyjenosci 
+                    // kazdy ktory ma pleasure dodatnia to ma krawedz z wejscia o wartosci przyjenosci 
                     if (pleasure[x, y] > 0 &&  l - 1 - x >= y)
                     {
                         buildingGraph.AddEdge(source, x + y * l, pleasure[x, y]);
                     }
                     
                     // kazdy poza najnizszym wierszem ma krawedzie do blokow (x,y-1) i (x+1,y-1)
-                    if (y > 0 && x < l - 1 && l - 1 - x >= y)
+                    if (y > 0 && x < l - 1 && l  - 1 - x >=y)
                     {
                         buildingGraph.AddEdge(x + y * l, x + (y - 1) * l, int.MaxValue);
                         buildingGraph.AddEdge(x + y * l, x + 1 + (y - 1) * l, int.MaxValue);
@@ -136,125 +125,79 @@ namespace ASD
         {
             int source, sink; 
             DiGraph<int> buildingGraph = buildBuildingGraph(l, h, pleasure,out source,out sink);
-            // sprawdzamy czy istnieje sciezka zrodlowy -> ujscie
-            var (flowValue, maxPleasureBuilding) = Flows.FordFulkerson(buildingGraph, source, sink);
-
-            // jesli jest conajmniej jedna krawedz ze zrodla ktora jest nienasycona to znaczy ze jest przyjemnosc
-
-            bool isPleasure = false;
-            int maxPleasure = 0;
+            int flowValue;
+            DiGraph<int> maxPleasureBuilding;
             
-            foreach (var edge in maxPleasureBuilding.OutEdges(source))
+            List<int> blocks = new List<int>();
+            bool blockRemoved = false;
+            
+            // zbuduj rezydualna 
+            
+            
+            do
             {
-                int weight = buildingGraph.GetEdgeWeight(source, edge.To);
-                int pleasureFlow = maxPleasureBuilding.GetEdgeWeight(source, edge.To);
-                if (weight > pleasureFlow)
+                blocks.Clear();
+                blockRemoved = false;
+                (flowValue, maxPleasureBuilding) = Flows.FordFulkerson(buildingGraph, source, sink);
+                DiGraph<int> residualGraph = buildResidual(buildingGraph, maxPleasureBuilding);
+                foreach(Edge<int> e in residualGraph.BFS().SearchFrom(source))
                 {
-                    isPleasure = true;
-                    int diff = weight - pleasureFlow;
-                    if (diff > maxPleasure)
-                    {
-                        maxPleasure = diff;
-                    }
+                    blocks.Add(e.To);
                 }
-            }
-            
-            // zbuduj graf odwrocony
-            var reversedGraph = new DiGraph<int>(buildingGraph.VertexCount);
-            for(int v=0; v<buildingGraph.VertexCount; v++)
-            {
-                foreach (var edge in buildingGraph.OutEdges(v))
+                blocks.RemoveAll((i => i == source));
+                // blocks.RemoveAll((i => i == sink));
+                // remove duplicates
+                // blocks = blocks.Distinct().ToList();
+                foreach (int block in blocks)
                 {
-                    reversedGraph.AddEdge(edge.To, edge.From, edge.Weight);
-                }
-            }
-
-            // usun krawedz z bloku do ujscia jesli jedyna krawedzia wchodzaca jest z zrodla i jedyna wychodzaca do ujscia i blok nie jest na najnizszym poziomie
-            
-            for(int y = 0; y < h ; y++)
-            {
-                for (int x = 0; x < l ; x++)
-                {
+                    // znajdz numer bloku ponizej
+                    int x = block % l;
+                    int y = block / l;
                     if (y > 0 && x < l - 1 && l - 1 - x >= y)
                     {
-                        // sprawdzic czy wchodzaca jest tylko jedna i jest ze zrodla
-                        if (reversedGraph.OutDegree(x + y * l) == 1)
+                        int blockBelow = x + (y - 1) * l;
+                        int blockBelowRight = x + 1 + (y - 1) * l;
+                        if (!blocks.Contains(blockBelow) || !blocks.Contains(blockBelowRight))
                         {
-                            foreach (var edge in reversedGraph.OutEdges(x + y * l))
-                            {
-                                if (edge.To == source)
-                                {
-                                    // sprawdzic czy wychodzaca jest tylko jedna i jest do ujscia
-                                    if(maxPleasureBuilding.OutDegree(x + y * l) == 1)
-                                    {
-                                        foreach (var edge2 in maxPleasureBuilding.OutEdges(x + y * l))
-                                        {
-                                            if (edge2.To == sink)
-                                            {
-                                                // usun krawedz
-                                                buildingGraph.RemoveEdge(x + y * l, sink);
-                                                buildingGraph.RemoveEdge(source, x + y * l);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }                        
+                            // usun krawedzie z bloku do blokow ponizej
+                            buildingGraph.RemoveEdge(block, blockBelow);
+                            buildingGraph.RemoveEdge(block, blockBelowRight);
+                            buildingGraph.RemoveEdge(source, block);
+                            buildingGraph.RemoveEdge(block, sink);
+                            blockRemoved = true;
+                        }
                     }
                 }
-            }
+
+            } while (blockRemoved);
             
-            // zbuduj nowy graf maxPleasureBuilding 
-            var (flowValue2, maxPleasureBuilding2) = Flows.FordFulkerson(buildingGraph, source, sink);
-          
-            
-            
-            // znajdz sumaryczna przyjemnosc czyli sume wag krawedzi wychodzacych z zrodla - przeplyw na tych krawedziach 
             int totalPleasure = 0;
-            foreach (var edge in maxPleasureBuilding2.OutEdges(source))
+            foreach (var edge in maxPleasureBuilding.OutEdges(source))
             {
-                int weight = buildingGraph.GetEdgeWeight(source, edge.To);
-                int pleasureFlow = maxPleasureBuilding2.GetEdgeWeight(source, edge.To);
-                totalPleasure += weight - pleasureFlow;
+                int pleasureFromBlock = buildingGraph.GetEdgeWeight(source, edge.To);
+                int cost = maxPleasureBuilding.GetEdgeWeight(source, edge.To);
+                totalPleasure += pleasureFromBlock - cost;
             }
 
-            if (totalPleasure == 0)
+            if (totalPleasure <= 0)
             {
                 blockOrder = null;
                 return null;
             }
             else
             {
-                // zbuduj kolejnosc blokow
-                List<(int x, int y)> blockOrderList = new List<(int x, int y)>();
-                // get all vertices that are not source and sink that are in the flowGraph (have non zero flow)
-                List<int> vertices = new List<int>();
-                for(int v = 0; v < buildingGraph.VertexCount; v++)
+                
+                blocks.Sort();
+                blocks = blocks.Distinct().ToList();
+                // zbuduj tablice blokow
+                blockOrder = new (int x, int y)[blocks.Count];
+                
+                for(int i = 0; i < blocks.Count; i++)
                 {
-                    if (v != source && v != sink)
-                    {
-                        // check if there is a flow on the edge
-                        if (maxPleasureBuilding2.OutDegree(v) > 0 || maxPleasureBuilding2.InDegree(v) > 0)
-                        {
-                            vertices.Add(v);
-                        }
-                    }
+                    blockOrder[i] = (blocks[i] % l, blocks[i] / l);
                 }
                 
-                // sort vertices by their order in the graph
-                vertices.Sort((v1, v2) => v1.CompareTo(v2));
-                // translate from vertex number to x,y
-                foreach (int v in vertices)
-                {
-                    int x = v % l;
-                    int y = v / l;
-                    blockOrderList.Add((x, y));
-                }
-                
-                blockOrder = blockOrderList.ToArray();
                 return totalPleasure;
-                
-                
             }
            
             
