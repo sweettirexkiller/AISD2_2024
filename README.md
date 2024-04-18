@@ -50,4 +50,16 @@ Kameleon Kazik chciałby odwiedzić Gekona Grzesia (grafy ruchow wymagajaych zmi
 #### Lab08 Punktowane przepływy 
 
 Kameleon Grzesik buduje domek dla kolegi w lesie
+1) Ford Fulkerson i poprawiania struktury grafu
+
+#### Lab09 Backtracking, wykladnicze
+DO PRZEĆWICZENIA!!!
+
+1) Algorytmy z nawrotami (rekurencyjny backtracking, najproszty to skoczek na planszy)
+2) Generowanie subsetu (wszystkich podzbiorow)
+3) Generowanie permutacj (wszystkich permutacji)
+4) Znajdywanie maksymalnej kliki
+5) Sprawdzanie izomorficznosci dowch grafow
+6) Zadanie z trescia Kampania Wyborcza
+7) Znajdywanie najwiekszego zbioru niezaleznego
 
