@@ -199,8 +199,6 @@ namespace ASD
                 
                 return totalPleasure;
             }
-           
-            
 
         }
     }
