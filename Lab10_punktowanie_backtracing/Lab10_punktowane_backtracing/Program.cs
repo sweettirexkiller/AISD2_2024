@@ -200,10 +200,10 @@ namespace ASD
                 {
                     return (Result.WrongResult, "Niepoprawne przejście między pokojami");
                 }
-                if (lastRoom == labyrinth.VertexCount - 1)
-                {
-                    return (Result.WrongResult, "Droga przechodzi przez wyjście");
-                }
+                // if (lastRoom == labyrinth.VertexCount - 1)
+                // {
+                //     return (Result.WrongResult, "Droga przechodzi przez wyjście");
+                // }
                 lastRoom = room;
 
                 if (distance[room] <= ++currentDistance - dragonDelay - 1)
