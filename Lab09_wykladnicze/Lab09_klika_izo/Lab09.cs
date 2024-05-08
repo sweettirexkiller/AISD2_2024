@@ -95,58 +95,67 @@ public static class Lab10GraphExtender
         {
             return false;
         }
-        
-        Dictionary<int, int> vertex_mapping = new Dictionary<int, int>();
 
-        return isIsomorphic(0, ref g, ref h, ref vertex_mapping, ref map);
+        int[] permutaion  = new int[g.VertexCount];
+        bool[] used = new bool[g.VertexCount];
+
+        return isIsomorphic(0, ref g, ref h, ref permutaion, ref used, ref map);
     }
 
-    private static bool isIsomorphic(int i, ref Graph<int> g, ref Graph<int> h, ref Dictionary<int, int> vertexMapping, ref int[] map)
+    private static bool isIsomorphic(int i, ref Graph<int> g, ref Graph<int> h, ref int[] permutation, ref bool[] used, ref int[] map)
     {
        
         if(i == g.VertexCount)
         {
-            map = vertexMapping.Values.ToArray();
+            map = permutation;
             return true;
         }
 
-        for (int u = 0; u < h.VertexCount; u++)
+        for (int u = 0; u < g.VertexCount; u++)
         {
-            if(isMappingValid(i, u, ref vertexMapping))
+            if(!used[u])
             {
-                vertexMapping.Add(i, u);
-                if(isIsomorphic(i + 1, ref g, ref h, ref vertexMapping, ref map))
+                used[u] = true;
+                // wierzcholkowi i z g przypisujemy wierzcholek u z h
+                // czy tak mozna ?
+                // czy ma ten sam stopien jak wierzcholek i z g
+                if(g.OutEdges(i).Count() != h.OutEdges(u).Count())
                 {
-                    return true;
+                    used[u] = false;
+                    continue;
                 }
-                vertexMapping.Remove(i);
+                // czy sasiaduje z takimi samymi wierzcholkami jak wierzcholek i z g
+                bool isNeighbourhoodValid = true;
+                foreach (var edge in g.OutEdges(i))
+                {
+                    // krwaedz i - v w G
+                    int v = edge.To;
+                    int w = edge.Weight;
+                    // znajdz wierzcholek z h ktory jest przypisany do v
+                    if (used[v]) 
+                    {
+                        int vInH = permutation[v];
+                        //jesli v ma mapowanie to krawedz u - vInH musi byc krawedzia w h i miec wage w
+                        if (!h.HasEdge(u, vInH) || h.GetEdgeWeight(u, vInH) != w)
+                        {
+                            isNeighbourhoodValid = false;
+                            break;
+                        }
+                    }
+                }
+                if (!isNeighbourhoodValid)
+                {
+                    used[u] = false;
+                    continue;
+                }
+                permutation[i] = u;
+                isIsomorphic(i + 1, ref g, ref h, ref permutation, ref used, ref map);
+                used[u] = false;
             }
         }
         
+        map = null;
         return false;
-    }
-
-    private static bool isMappingValid(int v1, int v2, ref Dictionary<int, int> vertex_mapping)
-    {
-        // czy v1 ma juz przypisany wierzcholek w v2 ?
-        if (vertex_mapping.ContainsKey(v1))
-        {
-            return vertex_mapping[v1] == v2;
-        }
-        else
-        { // czy v2 jest juz przypisane do innego wierzcholka ?
-            if (vertex_mapping.ContainsValue(v2))
-            {
-                return false;
-            }
-            else
-            {
-                // vertex_mapping.Add(v1, v2);
-                return true;
-            }
-            
-        }
-
     }
 
 }

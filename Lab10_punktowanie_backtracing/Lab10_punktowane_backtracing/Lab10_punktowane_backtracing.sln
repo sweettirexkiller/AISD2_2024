@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab10_punktowane_backtracing", "Lab10_punktowane_backtracing.csproj", "{743E5729-5C1C-4FCC-AC36-76D6A81525EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{743E5729-5C1C-4FCC-AC36-76D6A81525EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{743E5729-5C1C-4FCC-AC36-76D6A81525EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{743E5729-5C1C-4FCC-AC36-76D6A81525EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{743E5729-5C1C-4FCC-AC36-76D6A81525EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
