@@ -49,6 +49,118 @@ namespace ASD
         /// </summary>
         public double[] PointDepths(Point[] points)
         {
+            double[] result = new double[points.Length];
+            // podziel punkty na oddzielna tablice, jesli łamana zmienia kierunek x to znaczy ze jest to nowa łamana
+             List<Tuple<Point, int>[]> forwardSegments = new List<Tuple<Point, int>[]>();
+             List<Tuple<Point, int>[]> backwardSegments = new List<Tuple<Point, int>[]>();
+             
+             List<Tuple<Point, int>> forwardSegment = new List<Tuple<Point, int>>();
+             List<Tuple<Point, int>> backwardSegment = new List<Tuple<Point, int>>();
+             for(int i = 1; i < points.Length; i++)
+             {
+                 if(i == points.Length - 1)
+                 {
+                     if(forwardSegment.Count > 0)
+                     {
+                        // czy dodac ostatni punkt do forward segment ?
+                        if(points[i-1].x <= points[i].x)
+                        {
+                            forwardSegment.Add(new Tuple<Point, int>(points[i], i));
+                            forwardSegments.Add(forwardSegment.ToArray());
+                            forwardSegment.Clear();
+                        }
+                        else
+                        {
+                            // jesli nie to otworz nowy backward segment
+                            backwardSegment.Add(new Tuple<Point, int>(points[i], i));
+                            backwardSegment.Add(new Tuple<Point, int>(points[i], i));
+                            backwardSegments.Add(backwardSegment.ToArray());
+                            backwardSegment.Clear();
+                        }
+
+                     } else if(backwardSegment.Count > 0)
+                     {
+                            // czy dodac ostatni punkt do backward segment ?
+                            if(points[i-1].x > points[i].x)
+                            {
+                                backwardSegment.Add(new Tuple<Point, int>(points[i], i));
+                                backwardSegments.Add(backwardSegment.ToArray());
+                                backwardSegment.Clear();
+                            }
+                            else // jesli nie to otworz nowy forward segment
+                            {
+                                forwardSegment.Add(new Tuple<Point, int>(points[i-1], i-1));
+                                forwardSegment.Add(new Tuple<Point, int>(points[i], i));
+                                forwardSegments.Add(forwardSegment.ToArray());
+                                forwardSegment.Clear();
+                            }
+                     }
+                     break;
+                 }
+                 if(points[i -1].x <= points[i].x)
+                 {
+                     // wyczysc backward segment
+                     if(backwardSegment.Count > 0)
+                     {
+                         // dodaj ostatni punkt z backward segment do forward segment
+                         forwardSegment.Add(backwardSegment[backwardSegment.Count - 1]);
+                         backwardSegments.Add(backwardSegment.ToArray().Reverse().ToArray());
+                         backwardSegment.Clear();
+                     }
+                     if(i-1 == 0)
+                     {
+                         forwardSegment.Add(new Tuple<Point, int>(points[i-1], i-1));
+                     }
+                     forwardSegment.Add(new Tuple<Point, int>(points[i], i));
+
+                 }
+                 else
+                 {
+                     if(forwardSegment.Count > 0)
+                     {
+                         // dodaj ostatni punkt z forward segment do backward segment
+                         backwardSegment.Add(forwardSegment[forwardSegment.Count - 1]);
+                         forwardSegments.Add(forwardSegment.ToArray());
+                         forwardSegment.Clear();
+                     }
+                     if(i-1 == 0)
+                     {
+                         backwardSegment.Add(new Tuple<Point, int>(points[i-1], i-1));
+                     }
+                     backwardSegment.Add(new Tuple<Point, int>(points[i], i));
+                 }
+             }
+             
+             
+             // dla kazdego segmentu oblicz glebokosci
+             foreach(Tuple<Point, int>[] segment in forwardSegments)
+             {
+                 Point[] pointsSegment = segment.Select(t => t.Item1).ToArray();
+                 
+                 double[] depths = PointDepths1(pointsSegment);
+                 for(int i = 0; i < segment.Length; i++)
+                 {
+                     result[segment[i].Item2] = depths[i];
+                 }
+             }
+             
+                // foreach(Tuple<Point, int>[] segment in backwardSegments)
+                // {
+                //     segment.Reverse();
+                //     Point[] pointsSegment = segment.Select(t => t.Item1).ToArray();
+                //     
+                //     double[] depths = PointDepths1(pointsSegment);
+                //     // depths = depths.Reverse().ToArray();
+                //     for(int i = 0; i < segment.Length; i++)
+                //     {
+                //         result[segment[i].Item2] = depths[i];
+                //     }
+                // }
+            
+            return result;
+        }
+        public double[] PointDepths1(Point[] points)
+        {
             if(points.Length < 3)
                return new double[points.Length];
             // Console.WriteLine();
@@ -113,10 +225,7 @@ namespace ASD
         /// </summary>
         public double WaterVolume(Point[] points)
         {
-            // wielokaty od glebokosci 0 do 0 
-            
-            // najlepiej obliczyc metoda trapezow ?
-            
+           
             double[] depths = PointDepths(points);
             double volume = 0;
             for (int i = 0; i < points.Length - 1; i++)
@@ -157,7 +266,7 @@ namespace ASD
                 }
                 
             }
-
+            
             return volume;
         }
     }

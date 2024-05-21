@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8d72d735-1b9a-424f-967e-45dcd7c14555" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.2024.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.2024.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="8d72d735-1b9a-424f-967e-45dcd7c14555" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -63,7 +60,7 @@
       <updated>1712663724705</updated>
       <workItem from="1712663726899" duration="78000" />
       <workItem from="1712751022440" duration="915000" />
-      <workItem from="1716307200825" duration="134000" />
+      <workItem from="1716307200825" duration="176000" />
     </task>
     <task id="LOCAL-00001" summary="resolve">
       <option name="closed" value="true" />
@@ -73,16 +70,36 @@
       <option name="project" value="LOCAL" />
       <updated>1712663800909</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="readme update">
+      <option name="closed" value="true" />
+      <created>1716307349551</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1716307349551</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="resolve" />
-    <option name="LAST_COMMIT_MESSAGE" value="resolve" />
+    <MESSAGE value="readme update" />
+    <option name="LAST_COMMIT_MESSAGE" value="readme update" />
   </component>
 </project>
