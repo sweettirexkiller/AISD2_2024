@@ -53,7 +53,6 @@ Kameleon Grzesik buduje domek dla kolegi w lesie
 1) Ford Fulkerson i poprawiania struktury grafu
 
 #### Lab09 Backtracking, wykladnicze
-DO PRZEĆWICZENIA!!!
 
 1) Algorytmy z nawrotami (rekurencyjny backtracking, najproszty to skoczek na planszy)
 2) Generowanie subsetu (wszystkich podzbiorow)
@@ -62,4 +61,17 @@ DO PRZEĆWICZENIA!!!
 5) Sprawdzanie izomorficznosci dowch grafow
 6) Zadanie z trescia Kampania Wyborcza
 7) Znajdywanie najwiekszego zbioru niezaleznego
+
+#### Lab10 Backtracking (punktowane)
+
+1) Znajdywanie drogi w tunelach w ucieczce przed smokiem
+
+#### Lab11 Algorytmy geometryczne
+
+1) otoczka wypukła etc
+
+#### Lab12 Algorytmy geometryczne (punktowane)
+
+1) znajdywanie glebokosci i objetosci opadów deszczu na marsie
+
 
