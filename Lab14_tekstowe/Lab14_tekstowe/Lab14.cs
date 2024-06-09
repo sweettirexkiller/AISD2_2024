@@ -22,21 +22,25 @@ namespace Labratoria_ASD2_2024
         /// <returns>Tablica znalezionych palindromów</returns>
         public (int startIndex, int length)[] FindPalindromes(string text)
         {
-            //długości palindromów dla każdego znaku oryginalnego ciągu s
-            // List<int> oddPalindromes = ManacherOdd(text);
+            // długości palindromów dla każdego znaku oryginalnego ciągu s
+            List<int> oddPalindromes = ManacherOdd(text);
             List<int> evenPalindromes = ManacherEven(text);
+            HashSet<(int, int)> centers = new HashSet<(int, int)>();
             
             // przeksztalc promienie palindromow na poczatki i dlugosci
             List<(int, int)> result = new List<(int, int)>();
             for (int i = 0; i < text.Length; i++)
             {
-                // if (oddPalindromes[i] >= 1)
-                // {
-                //     result.Add((i - oddPalindromes[i], oddPalindromes[i]*2+1));
-                // }
-                if (evenPalindromes[i] > 1)
+                if (oddPalindromes[i] >= 1)
                 {
-                    result.Add((i - evenPalindromes[i] + 1 , evenPalindromes[i]*2));
+                    result.Add((i - oddPalindromes[i], oddPalindromes[i]*2+1));
+                }
+                if (evenPalindromes[i] >= 1)
+                {
+                    // czy w liscie nie ma juz palindromu o tym samym srodku ale mnniejszej dlugosc ?
+                    
+                    result.Add((i - evenPalindromes[i] , evenPalindromes[i]*2));
+                    centers.Add((i, evenPalindromes[i]));
                 }
             }
        
@@ -94,39 +98,24 @@ namespace Labratoria_ASD2_2024
         public static List<int> ManacherEven(string s)
         {
             int n = s.Length;
-            int L = 0, R = -1;
-            int[] evenP = new int[n];
+            int[] d2 = new int[n];
 
-            for (int i = 0; i < n; i++)
+            for (int i = 0, l = 0, r = -1; i < n; i++)
             {
-                if (i < R)
+                int k = (i > r) ? 0 : Math.Min(d2[l + r - i + 1], r - i + 1);
+                while (0 <= i - k - 1 && i + k < n && s[i - k - 1] == s[i + k])
                 {
-                    evenP[i] = Math.Min(evenP[L + R - i], R - i);
+                    k++;
                 }
-                else
+                d2[i] = k--;
+                if (i + k > r)
                 {
-                    evenP[i] = 0;
-                }
-
-                // to jedyna roznica miedzy parzystymi a nieparzystymi palindromami!!!
-                int left = i - evenP[i];
-                int right = i + evenP[i] + 1;
-
-                while (left >= 0 && right < n && s[left] == s[right])
-                {
-                    evenP[i]++;
-                    left--;
-                    right++;
-                }
-
-                if (i + evenP[i] > R)
-                {
-                    L = i - evenP[i] + 1;
-                    R = i + evenP[i];
+                    l = i - k - 1;
+                    r = i + k;
                 }
             }
 
-            return new List<int>(evenP);
+            return new List<int>(d2);
         }
 
     }
