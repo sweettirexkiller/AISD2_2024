@@ -24,7 +24,6 @@ namespace ASD2
 
             bool[] visited = new bool[g.VertexCount];
             bool[] colored = new bool[g.VertexCount];
-            bool[] considerAtEnd = new bool[g.VertexCount];
             int colorsCount = 0;
 
 
@@ -34,20 +33,28 @@ namespace ASD2
             colorsCount++;
             bool[] allneighboursColored = new bool[g.VertexCount];
             
-            bool found = FindColoringRec(g, 0,ref coloring,ref colored, ref colorsCount, ref visited, ref considerAtEnd, ref allneighboursColored);
-            // sprawdz czy ktorys nieodwiedzony wierzcholek
+            bool found = FindColoringRec(g, 0,ref coloring,ref colored, ref colorsCount, ref visited, ref allneighboursColored);
+           // czy wszystkie pokoolorowane
             for (int i = 0; i < g.VertexCount; i++)
             {
-                if (visited[i] == false || colored[i] == false || coloring[i] == -1)
+
+                if (visited[i] == false)
                 {
-                    if (i == 6)
+                    // znajdz najmniejszy kolor
+                    for (int color = 0; color < colorsCount; color++)
                     {
-                        int x;
+                        if (IsSafe(g, i, color, coloring))
+                        {
+                            coloring[i] = color;
+                            colored[i] = true;
+                            visited[i] = true;
+                            found = FindColoringRec(g, i,ref coloring,ref colored, ref colorsCount, ref visited, ref allneighboursColored);
+                            break;
+                        }
                     }
-                    found = FindColoringRec(g, i,ref coloring,ref colored, ref colorsCount, ref visited, ref considerAtEnd, ref allneighboursColored);
                 }
             }
-            
+
             if (found)
             {
                 return (colorsCount, coloring);
@@ -56,76 +63,26 @@ namespace ASD2
             return (0, null);
         }
         
-        private bool FindColoringRec(Graph g, int v,ref int[] coloring,ref bool[] colored, ref int colorsCount, ref bool[] visited, ref bool[] considerAtEnd, ref bool[] allneighboursColored)
+        private bool FindColoringRec(Graph g, int v,ref int[] coloring,ref bool[] colored, ref int colorsCount, ref bool[] visited, ref bool[] allneighboursColored)
         {
-            if(g.OutNeighbors(v).Count() == 0)
-            {
-                visited[v] = true;
-                coloring[v] = 0;
-                colored[v] = true;
-                return true;
-            }
-            
-            if(allneighboursColored[v])
-            {
-                // znajdz najmniejszy mozliwy kolor
-                for (int color = 0; color < colorsCount; color++)
-                {
-                    if (IsSafe(g, v, color, coloring))
-                    {
-                        coloring[v] = color;
-                        colored[v] = true;
-                        visited[v] = true;
-                        return true;
-                    }
-                }
-            }
-            
-            // if all vertices are colored
+            // jesli jestesmy na koncu to zwroc true, bo to znaczy ze doszlismy do ostatniego wierzcholka
             if (v == g.VertexCount - 1)
             {
-                // czy udało się pokolorować pozostałe wierzchołki?
-                
-                for (int i = 0; i < g.VertexCount; i++)
-                {
-                    if (considerAtEnd[i] == true)
-                    {
-                        // czy udało się pokolorować pozostałe wierzchołki?
-                        // pokoloruj na najmniejszy mozliwy kolor
-                        considerAtEnd[i] = false;
-                        for (int color = 0; color < colorsCount; color++)
-                        {
-                            if (IsSafe(g, i, color, coloring))
-                            {
-                                coloring[i] = color;
-                                colored[i] = true;
-                                visited[i] = true;
-                                if (FindColoringRec(g, i, ref coloring, ref colored, ref colorsCount, ref visited, ref considerAtEnd, ref allneighboursColored))
-                                {
-                                    return true;
-                                }
-                                colored[i] = false;
-                                visited[i] = false;
-                                coloring[i] = -1;
-                            }
-                        }
-                    }
-                }
                 return true;
             }
-            if(g.OutNeighbors(v).Count() == 0)
-            {
-                visited[v] = true;
-                coloring[v] = 0;
-                colored[v] = true;
-                return true;
-            }
+            
+            // wez sasiadow i posortuj malejaco wedlug liczby sasiadow
+            // List<int> neighbours = new List<int>();
+            // foreach (int w in g.OutNeighbors(v))
+            // {
+            //     neighbours.Add(w);
+            // }
+            // neighbours.Sort((x, y) => g.OutNeighbors(y).Count().CompareTo(g.OutNeighbors(x).Count()));
+            //
+
+
             foreach(int w in g.OutNeighbors(v))
             {
-                if (considerAtEnd[w])
-                {
-                    continue;
-                }
                 if (colored[w] == false)
                 {
                     // 1. policz ile niepokolororwanych sasiadow
@@ -146,24 +103,22 @@ namespace ASD2
                             availableColors++;
                         }
                     }
-                    
+
                     // Jeżeli liczba kolorów dostępnych dla jakiegoś wierzchołka w
                     // jest wieksza niż liczba jego niepokolorowanych sąsiadów,
                     // możemy usunąć wierzchołek v z dalszych rozważań (i -
                     // jeżeli udało się pokolorować pozostałe wierzchołki
                     //  - dokolorować v na końcu)
+                    if (availableColors > notColoredNeighbours)
+                    {
+                        continue;
+                    }
                     
                     if(notColoredNeighbours == 0)
                     {
                         allneighboursColored[w] = true;
                     }
                     
-                    if (availableColors > notColoredNeighbours && notColoredNeighbours > 0)
-                    {
-                        visited[w] = true;
-                        considerAtEnd[w] = true;
-                        continue;
-                    }
                     
                     // ktory kolor wolny ?
                     if (availableColors == 0)
@@ -172,16 +127,20 @@ namespace ASD2
                         coloring[w] = colorsCount - 1;
                         colored[w] = true;
                         visited[w] = true;
-                        if (FindColoringRec(g, w, ref coloring, ref colored, ref colorsCount, ref visited, ref considerAtEnd, ref allneighboursColored))
+                        if (allneighboursColored[w] == false)
                         {
-                            
-                            return true;
+                            if (FindColoringRec(g, w, ref coloring, ref colored, ref colorsCount, ref visited, ref allneighboursColored))
+                            {
+                                return true;
+                            }
+                            colored[w] = false;
+                            visited[w] = false;
+                            coloring[w] = -1;
                         }
-                        colorsCount--;
-                        colored[w] = false;
-                        visited[w] = false;
-                        coloring[w] = -1;
-                        continue;
+                        else
+                        {
+                            break;
+                        }
                     }
                     else
                     {
@@ -195,7 +154,7 @@ namespace ASD2
                                 visited[w] = true;
                                 if (allneighboursColored[w] == false)
                                 {
-                                    if (FindColoringRec(g, w, ref coloring, ref colored, ref colorsCount, ref visited, ref considerAtEnd, ref allneighboursColored))
+                                    if (FindColoringRec(g, w, ref coloring, ref colored, ref colorsCount, ref visited, ref allneighboursColored))
                                     {
                                         return true;
                                     }
