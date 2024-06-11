@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab15_kolorowanie", "Lab15_kolorowanie.csproj", "{769EF2A4-F8BB-4529-ADE2-A2F916274366}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{769EF2A4-F8BB-4529-ADE2-A2F916274366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{769EF2A4-F8BB-4529-ADE2-A2F916274366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{769EF2A4-F8BB-4529-ADE2-A2F916274366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{769EF2A4-F8BB-4529-ADE2-A2F916274366}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
