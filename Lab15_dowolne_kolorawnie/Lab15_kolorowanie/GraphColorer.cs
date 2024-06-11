@@ -15,6 +15,14 @@ namespace ASD2
         public (int numberOfColors, int[] coloring) FindBestColoring(Graph g)
         {
             
+            
+            int[] smallestColoring = null;
+            int smallestColoringColorsCount = g.VertexCount;
+            List<int>[] colorsAvailable = new List<int>[g.VertexCount];
+            for (int i = 0; i < g.VertexCount; i++)
+            {
+                colorsAvailable[i] = new List<int>();
+            }
             int[] coloring = new int[g.VertexCount];
             // initialice coloring as -1 
             for (int i = 0; i < g.VertexCount; i++)
@@ -26,6 +34,12 @@ namespace ASD2
             bool[] colored = new bool[g.VertexCount];
             int colorsCount = 0;
 
+            
+            int[] notColoredNeighboursCount = new int[g.VertexCount];
+            for (int i = 0; i < g.VertexCount; i++)
+            {
+                notColoredNeighboursCount[i] = g.Degree(i);
+            }
 
             colored[0] = true;
             coloring[0] = 0;
@@ -33,61 +47,52 @@ namespace ASD2
             colorsCount++;
             bool[] allneighboursColored = new bool[g.VertexCount];
             
-            bool found = FindColoringRec(g, 0,ref coloring,ref colored, ref colorsCount, ref visited, ref allneighboursColored);
-           // czy wszystkie pokoolorowane
+            List<int>[] neighboursSorted = new List<int>[g.VertexCount];
             for (int i = 0; i < g.VertexCount; i++)
             {
-
-                if (visited[i] == false)
+                neighboursSorted[i] = new List<int>();
+                foreach (int neighbour in g.OutNeighbors(i))
                 {
-                    // znajdz najmniejszy kolor
-                    for (int color = 0; color < colorsCount; color++)
-                    {
-                        if (IsSafe(g, i, color, coloring))
-                        {
-                            coloring[i] = color;
-                            colored[i] = true;
-                            visited[i] = true;
-                            found = FindColoringRec(g, i,ref coloring,ref colored, ref colorsCount, ref visited, ref allneighboursColored);
-                            break;
-                        }
-                    }
+                    neighboursSorted[i].Add(neighbour);
                 }
-            }
-
-            if (found)
-            {
-                return (colorsCount, coloring);
+                neighboursSorted[i].Sort((x, y) => g.Degree(x).CompareTo(g.Degree(y)));
             }
             
-            return (0, null);
+            FindColoringRec(ref g, 0,ref coloring,ref colored, ref colorsCount, ref visited, ref allneighboursColored, ref smallestColoring , ref smallestColoringColorsCount, ref colorsAvailable, ref neighboursSorted);
+           
+
+            return (smallestColoringColorsCount, smallestColoring);
         }
         
-        private bool FindColoringRec(Graph g, int v,ref int[] coloring,ref bool[] colored, ref int colorsCount, ref bool[] visited, ref bool[] allneighboursColored)
+        private void FindColoringRec(ref Graph g, int v,ref int[] coloring,ref bool[] colored,
+            ref int colorsCount, ref bool[] visited, ref bool[] allNeighboursColored,
+            ref int[] smallestColoring, ref int smallestColoringColorsCunt, ref List<int>[] colorsAvailable,
+            ref List<int>[] neighboursSorted)
         {
-            // jesli jestesmy na koncu to zwroc true, bo to znaczy ze doszlismy do ostatniego wierzcholka
-            if (v == g.VertexCount - 1)
+            // warunkiem koncowym jest, że wszystkie wierzchołki są pokolorowane
+            if (colored.All(x => x == true))
             {
-                return true;
+                if (colorsCount <= smallestColoringColorsCunt)
+                {
+                    smallestColoringColorsCunt = colorsCount;
+                    smallestColoring = coloring.ToArray();
+                }
+                return;
             }
-            
-            // wez sasiadow i posortuj malejaco wedlug liczby sasiadow
-            // List<int> neighbours = new List<int>();
-            // foreach (int w in g.OutNeighbors(v))
-            // {
-            //     neighbours.Add(w);
-            // }
-            // neighbours.Sort((x, y) => g.OutNeighbors(y).Count().CompareTo(g.OutNeighbors(x).Count()));
-            //
+            // jesli liczba kolorow jest wieksza niz najmniejsza znaleziona to przerwij
+            if (colorsCount > smallestColoringColorsCunt)
+            {
+                return;
+            }
 
 
-            foreach(int w in g.OutNeighbors(v))
+            foreach(int w in neighboursSorted[v])
             {
                 if (colored[w] == false)
                 {
                     // 1. policz ile niepokolororwanych sasiadow
                     int notColoredNeighbours = 0;
-                    foreach (int neighbour in g.OutNeighbors(w))
+                    foreach (int neighbour in neighboursSorted[w])
                     {
                         if (!colored[neighbour])
                         {
@@ -98,9 +103,14 @@ namespace ASD2
                     int availableColors = 0;
                     for (int color = 0; color < colorsCount; color++)
                     {
-                        if (IsSafe(g, w, color, coloring))
+                        if (IsSafe(color, coloring, ref neighboursSorted[w]))
                         {
+                            colorsAvailable[w].Add(color);
                             availableColors++;
+                        }
+                        else
+                        {
+                            colorsAvailable[w].Remove(color);
                         }
                     }
 
@@ -116,7 +126,7 @@ namespace ASD2
                     
                     if(notColoredNeighbours == 0)
                     {
-                        allneighboursColored[w] = true;
+                        allNeighboursColored[w] = true;
                     }
                     
                     
@@ -127,59 +137,80 @@ namespace ASD2
                         coloring[w] = colorsCount - 1;
                         colored[w] = true;
                         visited[w] = true;
-                        if (allneighboursColored[w] == false)
+                        if (allNeighboursColored[w] == false)
                         {
-                            if (FindColoringRec(g, w, ref coloring, ref colored, ref colorsCount, ref visited, ref allneighboursColored))
-                            {
-                                return true;
-                            }
+                            FindColoringRec(ref g, w, ref coloring, ref colored, ref colorsCount, ref visited,
+                                ref allNeighboursColored, ref smallestColoring, ref smallestColoringColorsCunt,
+                                ref colorsAvailable, ref neighboursSorted);
                             colored[w] = false;
                             visited[w] = false;
                             coloring[w] = -1;
                         }
-                        else
-                        {
-                            break;
-                        }
+                       
                     }
                     else
                     {
-                        for (int color = 0; color < colorsCount; color++)
+                        foreach (int color in colorsAvailable[w])
                         {
-                            // czy mozna pomalowac w  w kolorze i
-                            if (IsSafe(g, w, color, coloring))
+                            coloring[w] = color;
+                            colored[w] = true;
+                            visited[w] = true;
+                            if (allNeighboursColored[w] == false)
                             {
-                                coloring[w] = color;
-                                colored[w] = true;
-                                visited[w] = true;
-                                if (allneighboursColored[w] == false)
-                                {
-                                    if (FindColoringRec(g, w, ref coloring, ref colored, ref colorsCount, ref visited, ref allneighboursColored))
-                                    {
-                                        return true;
-                                    }
-                                    colored[w] = false;
-                                    visited[w] = false;
-                                    coloring[w] = -1;
-                                }
-                                else
-                                {
-                                    break;
-                                }
+                                FindColoringRec(ref g, w, ref coloring, ref colored, ref colorsCount, ref visited,
+                                    ref allNeighboursColored, ref smallestColoring, ref smallestColoringColorsCunt,
+                                    ref colorsAvailable, ref neighboursSorted);
+                                colored[w] = false;
+                                visited[w] = false;
+                                coloring[w] = -1;
                             }
                         }
                     }
                 }
             }
-            allneighboursColored[v] = true;
-
-            return true;
+            allNeighboursColored[v] = true;
+           
+            // jesli jakis wierzcholek nie zostal odwiedzony to koloruj 
+            for (int i = 0; i < g.VertexCount; i++)
+            {
+               // dla kazdego mozliwego koloru wykonaj kolorowanie 
+                if (visited[i] == false)
+                {
+                    for (int color = 0; color < colorsCount; color++)
+                    {
+                        if (IsSafe(color, coloring, ref neighboursSorted[i]))
+                        {
+                            coloring[i] = color;
+                            colored[i] = true;
+                            visited[i] = true;
+                            if (allNeighboursColored[i] == false)
+                            {
+                                FindColoringRec(ref g, i, ref coloring, ref colored, ref colorsCount, ref visited,
+                                    ref allNeighboursColored, ref smallestColoring, ref smallestColoringColorsCunt,
+                                    ref colorsAvailable, ref neighboursSorted);
+                                colored[i] = false;
+                                visited[i] = false;
+                                coloring[i] = -1;
+                            }
+                        }
+                    }
+                }
+            }
+            // warunkiem koncowym jest, że wszystkie wierzchołki są pokolorowane
+            if (colored.All(x => x == true))
+            {
+                if (colorsCount <= smallestColoringColorsCunt)
+                {
+                    smallestColoringColorsCunt = colorsCount;
+                    smallestColoring = coloring.ToArray();
+                }
+            }
         }
 
-        private bool IsSafe(Graph graph, int vertex, int color, int[] coloring)
+        private bool IsSafe(int color, int[] coloring, ref List<int> neighboursSorted)
         {
             // czy mozna pomalowac vetex w kolorze color
-            foreach (int neighbour in graph.OutNeighbors(vertex))
+            foreach (int neighbour in neighboursSorted)
             {
                 if (coloring[neighbour] == color)
                 {

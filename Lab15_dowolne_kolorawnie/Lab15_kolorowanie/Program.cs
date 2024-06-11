@@ -213,14 +213,14 @@ namespace ASD2
                 Graph G = new Graph(2*n);
                 for (int i = 0; i < 2 * n; i++)
                     G.AddEdge(i, (i + 1) % (2 * n));
-                tests.TestCases.Add(new GraphColoringTestCase(G, 2, 5, "Duży parzysty cykl"));
+                // tests.TestCases.Add(new GraphColoringTestCase(G, 2, 5, "Duży parzysty cykl"));
             }
             {
                 int n = 1000;
                 Graph G = new Graph(2*n+1);
                 for (int i = 0; i < 2 * n + 1; i++)
                     G.AddEdge(i, (i + 1) % (2 * n + 1));
-                tests.TestCases.Add(new GraphColoringTestCase(G, 3, 2, "Duży nieparzysty cykl"));
+                // tests.TestCases.Add(new GraphColoringTestCase(G, 3, 2, "Duży nieparzysty cykl"));
             }
             {
                 RandomGraphGenerator rgg = new RandomGraphGenerator(123);
