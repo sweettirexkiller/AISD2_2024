@@ -72,6 +72,20 @@ Kameleon Grzesik buduje domek dla kolegi w lesie
 
 #### Lab12 Algorytmy geometryczne (punktowane)
 
-1) znajdywanie glebokosci i objetosci opadów deszczu na marsie
+1) znajdywanie glebokosci i objetosci opadów deszczu na marsie 2.5pkt
 
+#### Lab13 Algorytmy Tekstowe
+
+1) KNP
+2) Naiwny substring
+3) tabela P
+
+#### Lab14 Algorytmy Tekstowe (puntkowane)
+
+1) Palindromy
+2) Agorytm Manachera 4 pkt.
+
+#### Lab15 Algorytm z dowolnego tematu - poprawkowe 
+
+1) kolorwanie wierzcholkowe, backtracking
 
